@@ -13,7 +13,7 @@ def cli_parser():
     """
     parser = argparse.ArgumentParser(
         prog= "runserver.py",
-        description= "The YUAG search application",
+        description= "Running Closetify App",
         allow_abbrev=False,
     )
     parser.add_argument('port', type=int, help='the port at which the server should listen')
@@ -37,10 +37,6 @@ def main():
         print("Error: port must be a positive integer.", file=sys.stderr)
         sys.exit(1)
 
-    # Check if database exists
-    if not os.path.exists("lux.sqlite"):
-        print("Error: Database file 'lux.sqlite' does not exist.", file=sys.stderr)
-        sys.exit(1)
     app.run(host='0.0.0.0', port=args.port)
 
 if __name__ == "__main__":
