@@ -109,3 +109,61 @@ def get_from_table(table_name):
         print(f"Error getting values from {table_name}: {e}")
         if 'connection' in locals():
             connection.rollback()
+
+def insert_into_table(table_name, data):
+    try:
+        with psycopg2.connect(...) as connection:
+            with connection.cursor() as cursor:
+                # Convert binary data to PostgreSQL-compatible format
+                if 'image_data' in data and data['image_data'] is not None:
+                    data['image_data'] = Binary(data['image_data'])
+
+                columns = list(data.keys())
+                values = list(data.values())
+                cols_ident = sql.SQL(', ').join(map(sql.Identifier, columns))
+                vals_placeholders = sql.SQL(', ').join([sql.Placeholder()] * len(values))
+                query = sql.SQL("INSERT INTO {table} ({cols}) VALUES ({vals})").format(
+                    table=sql.Identifier(table_name),
+                    cols=cols_ident,
+                    vals=vals_placeholders
+                )
+                cursor.execute(query, values)
+                connection.commit()
+                return True
+    except Exception as e:
+        print(f"Error inserting into {table_name}: {e}")
+        return False
+    
+def search_in_table(table_name, filters):
+    try:
+        with psycopg2.connect(...) as connection:
+            with connection.cursor() as cursor:
+                conditions = []
+                params = []
+                for key, value in filters.items():
+                    conditions.append(sql.SQL("{col} = %s").format(col=sql.Identifier(key)))
+                    params.append(value)
+                where_clause = sql.SQL(' AND ').join(conditions) if conditions else sql.SQL('')
+                query = sql.SQL("SELECT * FROM {table} WHERE {where}").format(
+                    table=sql.Identifier(table_name),
+                    where=where_clause
+                )
+                cursor.execute(query, params)
+                columns = [desc[0] for desc in cursor.description]
+                results = [dict(zip(columns, row)) for row in cursor.fetchall()]
+                return results
+    except Exception as e:
+        print(f"Error searching {table_name}: {e}")
+        return []
+
+def get_random_from_category(category):
+    try:
+        with psycopg2.connect(...) as connection:
+            with connection.cursor() as cursor:
+                query = sql.SQL("SELECT * FROM Clothing WHERE category = %s ORDER BY RANDOM() LIMIT 1")
+                cursor.execute(query, (category,))
+                columns = [desc[0] for desc in cursor.description]
+                return dict(zip(columns, cursor.fetchone()))
+    except Exception as e:
+        print(f"Error fetching random {category}: {e}")
+        return None
