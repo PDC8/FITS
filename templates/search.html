@@ -32,56 +32,62 @@
       <!-- In real usage, populate results here from the database query. -->
       <p class="placeholder">No items found yet. Try searching.</p>
     </div>
-
-    <script>
-      async function fetchResults(event) {
-        if (event) event.preventDefault();
-  
-        const form = document.querySelector('.search-form');
-        const query = new URLSearchParams(new FormData(form)).toString();
-        const response = await fetch(`/api/clothing?${query}`);
-        const data = await response.json();
-  
-        const resultsContainer = document.getElementById('search-results');
-        resultsContainer.innerHTML = '';
-  
-        if (data.length === 0) {
-          resultsContainer.innerHTML = '<p>No items found.</p>';
-          return;
-        }
-  
-        data.forEach(item => {
-          const itemElement = document.createElement('div');
-          itemElement.classList.add('item');
-          
-          const img = document.createElement('img');
-          if (item.item_image) {
-            img.src = `data:image/jpeg;base64,${item.item_image}`;
-            img.alt = item.item_name || 'Clothing Item';
-          } else {
-            img.src = '/static/placeholder.jpg';
-            img.alt = 'Placeholder Image';
-          }
-          print("HELP")
-  
-          const name = document.createElement('p');
-          name.textContent = `Name: ${item.item_name}`;
-  
-          const type = document.createElement('p');
-          type.textContent = `Type: ${item.type_name || 'Unknown'}`;
-  
-          itemElement.appendChild(img);
-          itemElement.appendChild(name);
-          itemElement.appendChild(type);
-          resultsContainer.appendChild(itemElement);
-        });
-      }
-  
-      document.querySelector('.search-form').addEventListener('submit', fetchResults);
-  
-      // Fetch all items on initial load
-      window.addEventListener('load', fetchResults);
-    </script>
   </main>
+  <script>
+    document.querySelector('.search-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      // Get form data
+      const formData = new URLSearchParams(new FormData(e.target));
+      
+      try {
+        const response = await fetch(`/api/clothing?${formData}`);
+        const items = await response.json();
+        
+        const resultsDiv = document.querySelector('.search-results');
+        resultsDiv.innerHTML = '';
+        
+        if (items.length > 0) {
+          // Create grid container
+          const grid = document.createElement('div');
+          grid.className = 'results-grid';
+          
+          items.forEach(item => {
+            const itemCard = document.createElement('div');
+            itemCard.className = 'item-card';
+            
+            const imageContent = item.item_image 
+              ? `<img src="data:image/png;base64,${item.item_image}" alt="${item.item_name}">`
+              : '<div class="no-image">No Image Available</div>';
+            
+            itemCard.innerHTML = `
+              <div class="item-image">${imageContent}</div>
+              <h3 class="item-name">${item.item_name}</h3>
+            `;
+            
+            grid.appendChild(itemCard);
+          });
+          
+          resultsDiv.appendChild(grid);
+        } else {
+          resultsDiv.innerHTML = '<p class="no-results">No items found matching your search</p>';
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    });
+  
+    // Load all items on page load
+    window.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const response = await fetch('/api/clothing');
+        const items = await response.json();
+        document.querySelector('.search-form').dispatchEvent(new Event('submit'));
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    });
+  </script>
+  
 </body>
 </html>
