@@ -101,33 +101,33 @@ def random_outfit():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
-# Endpoint to retrieve clothing image
-@app.route('/api/clothing/image/<int:clothing_id>', methods=['GET'])
-def get_clothing_image(clothing_id):
-    try:
-        # Retrieve image binary from the database
-        with psycopg2.connect(
-            user=os.getenv("user"),
-            password=os.getenv("password"),
-            host=os.getenv("host"),
-            port=os.getenv("port"),
-            dbname=os.getenv("dbname")
-        ) as connection:
-            with connection.cursor() as cursor:
-                query = sql.SQL("SELECT item_image FROM {table} WHERE id = %s").format(
-                    table=sql.Identifier('Clothing')
-                )
-                cursor.execute(query, (clothing_id,))
-                row = cursor.fetchone()
-                if not row or not row[0]:
-                    return jsonify({"error": "Image not found"}), 404
-                image_data = row[0]
-        # Return the image data with an appropriate MIME type (assuming JPEG)
-        response = make_response(image_data)
-        response.headers.set('Content-Type', 'image/jpeg')
-        return response
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+# # Endpoint to retrieve clothing image
+# @app.route('/api/clothing/image/<int:clothing_id>', methods=['GET'])
+# def get_clothing_image(clothing_id):
+#     try:
+#         # Retrieve image binary from the database
+#         with psycopg2.connect(
+#             user=os.getenv("user"),
+#             password=os.getenv("password"),
+#             host=os.getenv("host"),
+#             port=os.getenv("port"),
+#             dbname=os.getenv("dbname")
+#         ) as connection:
+#             with connection.cursor() as cursor:
+#                 query = sql.SQL("SELECT item_image FROM {table} WHERE id = %s").format(
+#                     table=sql.Identifier('Clothing')
+#                 )
+#                 cursor.execute(query, (clothing_id,))
+#                 row = cursor.fetchone()
+#                 if not row or not row[0]:
+#                     return jsonify({"error": "Image not found"}), 404
+#                 image_data = row[0]
+#         # Return the image data with an appropriate MIME type (assuming JPEG)
+#         response = make_response(image_data)
+#         response.headers.set('Content-Type', 'image/jpeg')
+#         return response
+#     except Exception as e:
+#         return jsonify({"error": str(e)}), 500
 
 
 
