@@ -13,6 +13,9 @@
 
   <main class="upload-container">
     <form class="upload-form" action="/api/clothing" method="POST" enctype="multipart/form-data">
+      <!-- User ID -->
+      <input type="hidden" name="user_id" value="1">
+
       <!-- Clothing Name -->
       <label for="item_name">Item Name:</label>
       <input type="text" id="item_name" name="item_name" required />
@@ -25,7 +28,7 @@
         <option value="1">Brand 1</option>
         <option value="2">Brand 2</option>
       </select>
-
+      
       <!-- Size (from Sizes table) -->
       <label for="size_id">Size:</label>
       <select id="size_id" name="size_id">
