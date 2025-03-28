@@ -51,7 +51,22 @@
           itemDiv.className = 'outfit-item';
           if (item) {
             let html = `<h3>${category.toUpperCase()}</h3>`;
-            html += `<p>${item.item_name}</p>`;
+            html += `<p><strong>Name:</strong> ${item.item_name}</p>`;
+            if (item.type_name) {
+              html += `<p><strong>Type:</strong> ${item.type_name}</p>`;
+            }
+            if (item.brand_name) {
+              html += `<p><strong>Brand:</strong> ${item.brand_name}</p>`;
+            }
+            if (item.size_name) {
+              html += `<p><strong>Size:</strong> ${item.size_name}</p>`;
+            }
+            if (item.color_names && item.color_names.length > 0) {
+              html += `<p><strong>Color(s):</strong> ${item.color_names.join(', ')}</p>`;
+            }
+            if (item.fabric_names && item.fabric_names.length > 0) {
+              html += `<p><strong>Fabric(s):</strong> ${item.fabric_names.join(', ')}</p>`;
+            }
             if (item.item_image) {
               html += `<img src="data:image/png;base64,${item.item_image}" alt="${item.item_name}" width="150">`;
             }
