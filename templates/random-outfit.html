@@ -18,11 +18,48 @@
 
     <div class="outfit-result">
       <!-- 
-        In a real implementation, your JS would call GET /api/generate-outfit
-        and populate this container with the chosen items (shirt, pants, shoes, etc.).
+        When you click the button, the JavaScript will call the backend endpoint 
+        and populate this container with the chosen items (e.g. top, bottom, shoes).
       -->
       <p class="placeholder">Click "Generate Outfit" to see a new look!</p>
     </div>
   </main>
+  
+  <script>
+    document.querySelector('.generate-btn').addEventListener('click', async () => {
+      try {
+        const response = await fetch('/api/outfit/random');
+        const outfit = await response.json();
+        const resultsDiv = document.querySelector('.outfit-result');
+        resultsDiv.innerHTML = ''; // Clear previous results
+        
+        // Create a container to display the outfit
+        const outfitContainer = document.createElement('div');
+        outfitContainer.className = 'outfit-container';
+        
+        // Loop through each category and display the item details
+        for (const category in outfit) {
+          const item = outfit[category];
+          const itemDiv = document.createElement('div');
+          itemDiv.className = 'outfit-item';
+          if (item) {
+            let html = `<h3>${category.toUpperCase()}</h3>`;
+            html += `<p>${item.item_name}</p>`;
+            if (item.item_image) {
+              html += `<img src="data:image/png;base64,${item.item_image}" alt="${item.item_name}" width="150">`;
+            }
+            itemDiv.innerHTML = html;
+          } else {
+            itemDiv.innerHTML = `<h3>${category.toUpperCase()}</h3><p>No item available</p>`;
+          }
+          outfitContainer.appendChild(itemDiv);
+        }
+        resultsDiv.appendChild(outfitContainer);
+      } catch (error) {
+        console.error('Error generating outfit:', error);
+      }
+    });
+  </script>
+  
 </body>
 </html>

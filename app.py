@@ -96,6 +96,10 @@ def random_outfit():
         outfit = {}
         for category, type_id in category_mapping.items():
             item = get_random_clothing_item(type_id)
+            if item:
+                if item.get('item_image'):
+                    # Convert image bytes to a base64 string
+                    item['item_image'] = base64.b64encode(item['item_image']).decode('utf-8')
             outfit[category] = item
         return jsonify(outfit), 200
     except Exception as e:
