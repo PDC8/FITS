@@ -4,7 +4,7 @@ Application to run flask and endpoints
 import urllib.request
 import urllib.error
 
-from flask import Flask, render_template, request, make_response
+from flask import Flask, render_template, request, make_response, jsonify
 from flask_cors import CORS
 from markupsafe import escape
 
@@ -18,32 +18,25 @@ CORS(app)  # Enable CORS for all routes
 
 
 
-# @app.route('/api/clothing', methods=['POST'])
-# def create_clothing():
-#     try:
-#         # Get uploaded image as binary data
-#         image = request.files.get('image')
-#         if image:
-#             image_data = image.read()  # Read bytes directly
-#         else:
-#             image_data = None
+@app.route('/api/clothing', methods=['POST'])
+def create_clothing():
+    try:
+        # Get form data
+        data = {
+            'user_id' : request.form.get('user_id'),
+            'item_name' : request.form.get('item_name'),
+            'brand_id' : request.form.get('brand_id'),
+            'size_id' : request.form.get('size_id'),
+            'type_id': request.form.get('type_id'),
+            'item_image': request.files['image'].read() if 'image' in request.files else None
+        }
+        # Insert into database
+        insert_into_table('Clothing Items', data)
+        return jsonify({"message": "Clothing item added successfully"}), 201
+    
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
-#         # Extract other form data
-#         data = request.form
-#         category = data.get('category')
-#         color_id = data.get('color_id')
-#         # Add other fields
-
-#         # Insert into database
-#         insert_into_table('Clothing', {
-#             'category': category,
-#             'color_id': color_id,
-#             'image_data': image_data,  # Store binary data
-#             # Add other columns
-#         })
-#         return jsonify({'message': 'Clothing item created'}), 201
-#     except Exception as e:
-#         return jsonify({'error': str(e)}), 500
 
 
 # # Endpoint to search clothing
