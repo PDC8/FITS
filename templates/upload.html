@@ -4,12 +4,19 @@
 <head>
   <meta charset="UTF-8" />
   <title>Upload Clothing - Digital Closet</title>
-  <link rel="stylesheet" href="/static/upload.css" />
+  <link rel="stylesheet" href="static/upload.css" />
 </head>
 <body>
   <header>
     <h1>Upload a New Clothing Item</h1>
   </header>
+
+  <nav class="main-nav">
+    <ul>
+      <!-- Back button to return to home -->
+      <li><a href="index.html">Back to home</a></li>
+    </ul>
+  </nav>
 
   <main class="upload-container">
     <form class="upload-form" action="/api/clothing" method="POST" enctype="multipart/form-data">
@@ -61,9 +68,14 @@
       <label for="type_id">Type:</label>
       <select id="type_id" name="type_id">
         <option value="">-- Select a Clothing Type --</option>
-        <option value="1">Shirt</option>
-        <option value="2">Pants</option>
-        <option value="3">Shoes</option>
+        <option value="1">XS</option>
+        <option value="2">S</option>
+        <option value="3">M</option>
+        <option value="4">L</option>
+        <option value="5">XL</option>
+        <option value="6">26</option>
+        <option value="7">27</option>
+        <option value="8">28</option>
       </select>
 
       <!-- Colors (from Colors table) - multiple selection possible -->
@@ -81,8 +93,7 @@
 
       <!-- Fabrics (from Fabrics table) -->
       <label for="fabric_id">Fabric:</label>
-      <select id="fabric_id" name="fabric_id">
-        <option value="">-- Select a Fabric --</option>
+      <select id="fabric_id" name="fabric_id" multiple>
         <option value="1">Cotton</option>
         <option value="2">Linen</option>
         <option value="3">Hemp</option>
