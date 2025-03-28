@@ -29,6 +29,21 @@ CORS(app)  # Enable CORS for all routes
 def home():
     return render_template('index.html')
 
+@app.route('/login')
+def login():
+    return render_template('login.html')
+
+@app.route('/random-outfit')
+def random_fit():
+    return render_template('random-outfit.html')
+
+@app.route('/search')
+def search():
+    return render_template('search.html')
+
+@app.route('/upload')
+def upload():
+    return render_template('upload.html')
 
 @app.route('/api/clothing', methods=['POST'])
 def create_clothing():
