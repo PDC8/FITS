@@ -12,12 +12,12 @@
   </header>
 
   <main class="search-container">
-    <form class="search-form" action="#" method="GET">
-      <label for="search_query">Search:</label>
-      <input type="text" id="search_query" name="search_query" placeholder="e.g. 'blue shirt'" />
+    <form class="search-form" action="/api/clothing" method="GET">
+      <label for="item_name">Search:</label>
+      <input type="text" id="item_name" name="item_name" placeholder="e.g. 'blue shirt'" />
 
-      <label for="search_type">Type:</label>
-      <select id="search_type" name="search_type">
+      <label for="type_id">Type:</label>
+      <select id="type_id" name="type_id">
         <option value="">All Types</option>
         <option value="1">Shirt</option>
         <option value="2">Pants</option>
@@ -32,6 +32,56 @@
       <!-- In real usage, populate results here from the database query. -->
       <p class="placeholder">No items found yet. Try searching.</p>
     </div>
+
+    <script>
+      async function fetchResults(event) {
+        if (event) event.preventDefault();
+  
+        const form = document.querySelector('.search-form');
+        const query = new URLSearchParams(new FormData(form)).toString();
+        const response = await fetch(`/api/clothing?${query}`);
+        const data = await response.json();
+  
+        const resultsContainer = document.getElementById('search-results');
+        resultsContainer.innerHTML = '';
+  
+        if (data.length === 0) {
+          resultsContainer.innerHTML = '<p>No items found.</p>';
+          return;
+        }
+  
+        data.forEach(item => {
+          const itemElement = document.createElement('div');
+          itemElement.classList.add('item');
+          
+          const img = document.createElement('img');
+          if (item.item_image) {
+            img.src = `data:image/jpeg;base64,${item.item_image}`;
+            img.alt = item.item_name || 'Clothing Item';
+          } else {
+            img.src = '/static/placeholder.jpg';
+            img.alt = 'Placeholder Image';
+          }
+          print("HELP")
+  
+          const name = document.createElement('p');
+          name.textContent = `Name: ${item.item_name}`;
+  
+          const type = document.createElement('p');
+          type.textContent = `Type: ${item.type_name || 'Unknown'}`;
+  
+          itemElement.appendChild(img);
+          itemElement.appendChild(name);
+          itemElement.appendChild(type);
+          resultsContainer.appendChild(itemElement);
+        });
+      }
+  
+      document.querySelector('.search-form').addEventListener('submit', fetchResults);
+  
+      // Fetch all items on initial load
+      window.addEventListener('load', fetchResults);
+    </script>
   </main>
 </body>
 </html>
