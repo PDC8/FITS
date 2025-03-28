@@ -1,0 +1,73 @@
+<!-- upload.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Upload Clothing - Digital Closet</title>
+  <link rel="stylesheet" href="upload.css" />
+</head>
+<body>
+  <header>
+    <h1>Upload a New Clothing Item</h1>
+  </header>
+
+  <main class="upload-container">
+    <form class="upload-form" action="#" method="POST" enctype="multipart/form-data">
+      <!-- Clothing Name -->
+      <label for="item_name">Item Name:</label>
+      <input type="text" id="item_name" name="item_name" required />
+
+      <!-- Brand Selection (from Brands table) -->
+      <label for="brand_id">Brand:</label>
+      <select id="brand_id" name="brand_id">
+        <option value="">-- Select a Brand --</option>
+        <!-- Options would be populated from your database -->
+        <option value="1">Brand 1</option>
+        <option value="2">Brand 2</option>
+      </select>
+
+      <!-- Size (from Sizes table) -->
+      <label for="size_id">Size:</label>
+      <select id="size_id" name="size_id">
+        <option value="">-- Select a Size --</option>
+        <option value="1">Small</option>
+        <option value="2">Medium</option>
+        <option value="3">Large</option>
+      </select>
+
+      <!-- Clothing Type (from Clothing Type table) -->
+      <label for="type_id">Type:</label>
+      <select id="type_id" name="type_id">
+        <option value="">-- Select a Clothing Type --</option>
+        <option value="1">Shirt</option>
+        <option value="2">Pants</option>
+        <option value="3">Shoes</option>
+      </select>
+
+      <!-- Colors (from Colors table) - multiple selection possible -->
+      <label for="color_id">Color(s):</label>
+      <select id="color_id" name="color_id" multiple>
+        <option value="1">Red</option>
+        <option value="2">Blue</option>
+        <option value="3">Green</option>
+        <!-- Add more from your Colors table -->
+      </select>
+
+      <!-- Fabrics (from Fabrics table) -->
+      <label for="fabric_id">Fabric:</label>
+      <select id="fabric_id" name="fabric_id">
+        <option value="">-- Select a Fabric --</option>
+        <option value="1">Cotton</option>
+        <option value="2">Denim</option>
+        <option value="3">Wool</option>
+      </select>
+
+      <!-- Optional file upload for images -->
+      <label for="item_image">Upload Image:</label>
+      <input type="file" id="item_image" name="item_image" accept="image/*" />
+
+      <button type="submit">Upload Item</button>
+    </form>
+  </main>
+</body>
+</html>

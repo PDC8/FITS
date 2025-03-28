@@ -1,0 +1,37 @@
+<!-- search.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Search Closet - Digital Closet</title>
+  <link rel="stylesheet" href="search.css" />
+</head>
+<body>
+  <header>
+    <h1>Search Your Closet</h1>
+  </header>
+
+  <main class="search-container">
+    <form class="search-form" action="#" method="GET">
+      <label for="search_query">Search:</label>
+      <input type="text" id="search_query" name="search_query" placeholder="e.g. 'blue shirt'" />
+
+      <label for="search_type">Type:</label>
+      <select id="search_type" name="search_type">
+        <option value="">All Types</option>
+        <option value="1">Shirt</option>
+        <option value="2">Pants</option>
+        <option value="3">Shoes</option>
+      </select>
+
+      <button type="submit">Find Items</button>
+    </form>
+
+    <!-- Results area -->
+    <div class="search-results">
+      <!-- In real usage, populate results here from the database query. -->
+      <p class="placeholder">No items found yet. Try searching.</p>
+    </div>
+  </main>
+</body>
+</html>
