@@ -1,5 +1,5 @@
 import psycopg2
-from psycopg2 import sql
+from psycopg2 import sql, Binary
 from dotenv import load_dotenv
 import os
 

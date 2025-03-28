@@ -48,6 +48,9 @@ def upload():
 @app.route('/api/clothing', methods=['POST'])
 def create_clothing():
     try:
+        # Get uploaded file
+        uploaded_file = request.files.get('item_image')
+
         # Get form data
         data = {
             'user_id' : request.form.get('user_id'),
@@ -55,7 +58,7 @@ def create_clothing():
             'brand_id' : request.form.get('brand_id'),
             'size_id' : request.form.get('size_id'),
             'type_id': request.form.get('type_id'),
-            'item_image': request.files['image'].read() if 'image' in request.files else None
+            'item_image': uploaded_file.read() if uploaded_file else None
         }
         # Insert into database
         insert_into_table('Clothing Items', data)
