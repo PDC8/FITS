@@ -4,7 +4,7 @@ Application to run flask and endpoints
 import urllib.request
 import urllib.error
 
-from flask import Flask, render_template, request, make_response, jsonify
+from flask import Flask, render_template, request, make_response, jsonify, redirect, url_for
 from flask_cors import CORS
 from markupsafe import escape
 
@@ -59,7 +59,7 @@ def create_clothing():
         }
         # Insert into database
         insert_into_table('Clothing Items', data)
-        return jsonify({"message": "Clothing item added successfully"}), 201
+        return redirect(url_for('home'))
     
     except Exception as e:
         return jsonify({"error": str(e)}), 500
