@@ -49,4 +49,14 @@ default_tables = {
         {'size_id' : '14', 'size_name' : '34'},
         {'size_id' : '15', 'size_name' : '35'},
     ],
+    'Clothing Types' : [
+        {'type_id' : '1', 'type_name' : 'XS'},
+        {'type_id' : '2', 'type_name' : 'S'},
+        {'type_id' : '3', 'type_name' : 'M'},
+        {'type_id' : '4', 'type_name' : 'L'},
+        {'type_id' : '5', 'type_name' : 'XL'},
+        {'type_id' : '6', 'type_name' : '26'},
+        {'type_id' : '7', 'type_name' : '27'},
+        {'type_id' : '8', 'type_name' : '28'},
+    ],
 }
