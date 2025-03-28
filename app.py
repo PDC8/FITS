@@ -3,6 +3,7 @@ Application to run flask and endpoints
 """
 import urllib.request
 import urllib.error
+import base64
 
 from flask import Flask, render_template, request, make_response, jsonify, redirect, url_for
 from flask_cors import CORS
@@ -73,7 +74,11 @@ def search_clothing():
     try:
         # Use query parameters as filter
         filters = request.args.to_dict(flat=False)
-        results = search_in_table('Clothing', filters)
+        results = search_in_table('Clothing Items', filters)
+        for item in results:
+            if item.get('item_image'):
+                # Convert bytes to base64 string
+                item['item_image'] = base64.b64encode(item['item_image']).decode('utf-8')
         return jsonify(results), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -130,6 +135,6 @@ def get_clothing_image(clothing_id):
 # init_all_default_values(default_tables)
 # get_from_table("Sizes")
 # insert_into_table("Users", {"name" : "Testing", "email" : "testing123@gmail.com", "password" : "should be hashed"})
-# search_in_table("Colors", {'color_id' : ['1', '2']})
+# search_in_table("Clothing Items")
 # get_random_clothing_item(1)
 
