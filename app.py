@@ -126,7 +126,7 @@ def get_clothing_image(clothing_id):
 #Testing database.py functions
 # init_all_default_values(default_tables)
 # get_from_table("Sizes")
-# insert_into_table("Colors", {"color_id" : "10", "color_name" : "Cyan"})
+# insert_into_table("Users", {"name" : "Testing", "email" : "testing123@gmail.com", "password" : "should be hashed"})
 # search_in_table("Colors", {'color_id' : ['1', '2']})
 # get_random_clothing_item(1)
 
