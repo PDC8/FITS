@@ -113,7 +113,7 @@ def get_from_table(table_name):
         if 'connection' in locals():
             connection.rollback()
 
-def insert_into_table(table_name, data):
+def insert_into_table(table_name, data, return_id=False):
     """
     Inserts data into any table
 
@@ -138,18 +138,40 @@ def insert_into_table(table_name, data):
                     data['item_image'] = Binary(data['item_image'])
 
                 columns = list(data.keys())
-                print(columns)
+                # print(columns)
                 values = list(data.values())
-                print(values)
+                # print(values)
                 cols_ident = sql.SQL(', ').join(map(sql.Identifier, columns))
                 vals_placeholders = sql.SQL(', ').join([sql.Placeholder()] * len(values))
-                query = sql.SQL("INSERT INTO {table} ({cols}) VALUES ({vals})").format(
-                    table=sql.Identifier(table_name),
-                    cols=cols_ident,
-                    vals=vals_placeholders
-                )
+
+                if return_id:
+                    query = sql.SQL("""
+                        INSERT INTO {table} ({cols})
+                        VALUES ({vals})
+                        RETURNING item_id
+                    """).format(
+                        table=sql.Identifier(table_name),
+                        cols=cols_ident,
+                        vals=vals_placeholders
+                    )
+                else:
+                    query = sql.SQL("""
+                        INSERT INTO {table} ({cols})
+                        VALUES ({vals})
+                    """).format(
+                        table=sql.Identifier(table_name),
+                        cols=cols_ident,
+                        vals=vals_placeholders
+                    )
                 cursor.execute(query, values)
-                connection.commit()
+
+                if return_id:
+                    item_id = cursor.fetchone()[0]
+                    connection.commit()
+                    return item_id
+                else:
+                    connection.commit()
+                    return True
     except Exception as e:
         print(f"Error inserting into {table_name}: {e}")
     

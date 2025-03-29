@@ -44,7 +44,13 @@ def search():
 
 @app.route('/upload')
 def upload():
-    return render_template('upload.html')
+    return render_template('upload.html', 
+                           brands=default_tables['Brands'], 
+                           sizes=default_tables['Sizes'],
+                           types=default_tables['Clothing Types'],
+                           colors=default_tables['Colors'],
+                           fabrics=default_tables['Fabrics'] 
+                        )
 
 @app.route('/api/clothing', methods=['POST'])
 def create_clothing():
@@ -61,8 +67,19 @@ def create_clothing():
             'type_id': request.form.get('type_id'),
             'item_image': uploaded_file.read() if uploaded_file else None
         }
-        # Insert into database
-        insert_into_table('Clothing Items', data)
+        # Insert into Clothing Items Table and get primary key
+        clothing_item_id = str(insert_into_table('Clothing Items', data, True))
+        
+        # Insert into Clothing Colors and Clothing Fabrics Tables
+        color_ids = request.form.getlist('color_id')
+        for id in color_ids:
+            id = str(id)
+            insert_into_table('Clothing Colors', {'item_id' : clothing_item_id, 'color_id' : id})
+        fabric_ids = request.form.getlist('fabric_id')
+        for id in fabric_ids:
+            id = str(id)
+            insert_into_table('Clothing Fabrics', {'item_id' : clothing_item_id, 'fabric_id' : id})
+        print(color_ids, fabric_ids)
         return redirect(url_for('home'))
     
     except Exception as e:

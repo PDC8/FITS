@@ -31,129 +31,49 @@
       <label for="brand_id">Brand:</label>
       <select id="brand_id" name="brand_id">
         <option value="">-- Select a Brand --</option>
-        <!-- Options would be populated from your database -->
-        <option value="1">Nike</option>
-        <option value="2">Adidas</option>
-        <option value="3">Zara</option>
-        <option value="4">H&M</option>
-        <option value="5">Uniqlo</option>
-        <option value="6">Levi's</option>
-        <option value="7">Gucci</option>
-        <option value="8">Louis Vuitton</option>
-        <option value="9">Under Armour</option>
-        <option value="10">Puma</option>
+        {% for brand in brands %}
+          <option value="{{ brand.brand_id }}">{{ brand.brand_name }}</option>
+        {% endfor %}
       </select>
       
       <!-- Size (from Sizes table) -->
       <label for="size_id">Size:</label>
       <select id="size_id" name="size_id">
         <option value="">-- Select a Size --</option>
-        <option value="1">S</option>
-        <option value="2">M</option>
-        <option value="3">L</option>
-        <option value="5">XL</option>
-        <option value="6">26</option>
-        <option value="7">27</option>
-        <option value="8">28</option>
-        <option value="9">29</option>
-        <option value="10">30</option>
-        <option value="11">31</option>
-        <option value="12">32</option>
-        <option value="13">33</option>
-        <option value="14">34</option>
-        <option value="15">35</option>
+        {% for size in sizes %}
+          <option value="{{ size.size_id }}">{{ size.size_name }}</option>
+        {% endfor %}
       </select>
 
       <!-- Clothing Type (from Clothing Type table) -->
       <label for="type_id">Type:</label>
       <select id="type_id" name="type_id">
         <option value="">-- Select a Clothing Type --</option>
-        <option value="1">XS</option>
-        <option value="2">S</option>
-        <option value="3">M</option>
-        <option value="4">L</option>
-        <option value="5">XL</option>
-        <option value="6">26</option>
-        <option value="7">27</option>
-        <option value="8">28</option>
+        {% for type in types %}
+          <option value="{{ type.type_id }}">{{ type.type_name }}</option>
+        {% endfor %}
       </select>
 
       <!-- Colors (from Colors table) - multiple selection possible -->
       <label for="color_id">Color(s):</label>
       <div class="checkbox-grid">
-        <label class="checkbox-square">
-          <input type="checkbox" name="color_id" value="1">
-          <span>Red</span>
-        </label>
-        <label class="checkbox-square">
-          <input type="checkbox" name="color_id" value="2">
-          <span>Orange</span>
-        </label>
-        <label class="checkbox-square">
-          <input type="checkbox" name="color_id" value="3">
-          <span>Yellow</span>
-        </label>
-        <label class="checkbox-square">
-          <input type="checkbox" name="color_id" value="4">
-          <span>Green</span>
-        </label>
-        <label class="checkbox-square">
-          <input type="checkbox" name="color_id" value="5">
-          <span>Blue</span>
-        </label>
-        <label class="checkbox-square">
-          <input type="checkbox" name="color_id" value="6">
-          <span>Indigo</span>
-        </label>
-        <label class="checkbox-square">
-          <input type="checkbox" name="color_id" value="7">
-          <span>Violet</span>
-        </label>
+        {% for color in colors %}
+          <label class="checkbox-square">
+            <input type="checkbox" name="color_id" value="{{ color.color_id }}">
+            <span>{{ color.color_name }}</span>
+          </label>
+        {% endfor %}
       </div>
 
       <!-- Fabrics (from Fabrics table) -->
       <label for="fabric_id">Fabric(s):</label>
       <div class="checkbox-grid">
-        <label class="checkbox-square">
-          <input type="checkbox" name="fabric_id" value="1">
-          <span>Cotton</span>
-        </label>
-        <label class="checkbox-square">
-          <input type="checkbox" name="fabric_id" value="2">
-          <span>Linen</span>
-        </label>
-        <label class="checkbox-square">
-          <input type="checkbox" name="fabric_id" value="3">
-          <span>Hemp</span>
-        </label>
-        <label class="checkbox-square">
-          <input type="checkbox" name="fabric_id" value="4">
-          <span>Wool</span>
-        </label>
-        <label class="checkbox-square">
-          <input type="checkbox" name="fabric_id" value="5">
-          <span>Cashmere</span>
-        </label>
-        <label class="checkbox-square">
-          <input type="checkbox" name="fabric_id" value="6">
-          <span>Silk</span>
-        </label>
-        <label class="checkbox-square">
-          <input type="checkbox" name="fabric_id" value="7">
-          <span>Polyester</span>
-        </label>
-        <label class="checkbox-square">
-          <input type="checkbox" name="fabric_id" value="8">
-          <span>Nylon</span>
-        </label>
-        <label class="checkbox-square">
-          <input type="checkbox" name="fabric_id" value="9">
-          <span>Spandex</span>
-        </label>
-        <label class="checkbox-square">
-          <input type="checkbox" name="fabric_id" value="10">
-          <span>Acrylic</span>
-        </label>
+        {% for fabric in fabrics %}
+          <label class="checkbox-square">
+            <input type="checkbox" name="fabric_id" value="{{ fabric.fabric_id }}">
+            <span>{{ fabric.fabric_name }}</span>
+          </label>
+        {% endfor %}
       </div>
 
       <!-- Optional file upload for images -->
