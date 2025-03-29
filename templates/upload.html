@@ -29,8 +29,8 @@
 
       <!-- Brand Selection (from Brands table) -->
       <label for="brand_id">Brand:</label>
-      <select id="brand_id" name="brand_id">
-        <option value="">-- Select a Brand --</option>
+      <select id="brand_id" name="brand_id" required>
+        <option value="" disabled selected>-- Select a Brand --</option>
         {% for brand in brands %}
           <option value="{{ brand.brand_id }}">{{ brand.brand_name }}</option>
         {% endfor %}
@@ -38,8 +38,8 @@
       
       <!-- Size (from Sizes table) -->
       <label for="size_id">Size:</label>
-      <select id="size_id" name="size_id">
-        <option value="">-- Select a Size --</option>
+      <select id="size_id" name="size_id" required>
+        <option value="" disabled selected>-- Select a Size --</option>
         {% for size in sizes %}
           <option value="{{ size.size_id }}">{{ size.size_name }}</option>
         {% endfor %}
@@ -47,8 +47,8 @@
 
       <!-- Clothing Type (from Clothing Type table) -->
       <label for="type_id">Type:</label>
-      <select id="type_id" name="type_id">
-        <option value="">-- Select a Clothing Type --</option>
+      <select id="type_id" name="type_id" required>
+        <option value="" disabled selected>-- Select a Clothing Type --</option>
         {% for type in types %}
           <option value="{{ type.type_id }}">{{ type.type_name }}</option>
         {% endfor %}
