@@ -25,7 +25,11 @@ import os
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
-
+brands=default_tables['Brands']
+sizes=default_tables['Sizes']
+types=default_tables['Clothing Types']
+colors=default_tables['Colors']
+fabrics=default_tables['Fabrics'] 
 @app.route('/')
 def home():
     return render_template('index.html')
@@ -40,16 +44,22 @@ def random_fit():
 
 @app.route('/search')
 def search():
-    return render_template('search.html')
+    return render_template('search.html',
+                           brands=brands,
+                           sizes=sizes,
+                           types=types,
+                           colors=colors,
+                           fabrics=fabrics
+                        )
 
 @app.route('/upload')
 def upload():
     return render_template('upload.html', 
-                           brands=default_tables['Brands'], 
-                           sizes=default_tables['Sizes'],
-                           types=default_tables['Clothing Types'],
-                           colors=default_tables['Colors'],
-                           fabrics=default_tables['Fabrics'] 
+                           brands=brands,
+                           sizes=sizes,
+                           types=types,
+                           colors=colors,
+                           fabrics=fabrics 
                         )
 
 @app.route('/api/clothing', methods=['POST'])

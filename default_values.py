@@ -7,6 +7,8 @@ default_tables = {
         {'color_id' : '5', 'color_name' : 'Blue'},
         {'color_id' : '6', 'color_name' : 'Indigo'},
         {'color_id' : '7', 'color_name' : 'Violet'},
+        {'color_id' : '8', 'color_name' : 'Black'},
+        {'color_id' : '9', 'color_name' : 'White'},
     ],
     'Fabrics' : [
         {'fabric_id' : '1', 'fabric_name' : 'Cotton'},
@@ -31,6 +33,7 @@ default_tables = {
         {'brand_id': '8', 'brand_name': 'Louis Vuitton'},
         {'brand_id': '9', 'brand_name': 'Under Armour'},
         {'brand_id': '10', 'brand_name': 'Puma'},
+        {'brand_id': '11', 'brand_name': 'New Balance'},
     ],
     'Sizes' : [
         {'size_id' : '1', 'size_name' : 'XS'},
@@ -50,13 +53,13 @@ default_tables = {
         {'size_id' : '15', 'size_name' : '35'},
     ],
     'Clothing Types' : [
-        {'type_id' : '1', 'type_name' : 'XS'},
-        {'type_id' : '2', 'type_name' : 'S'},
-        {'type_id' : '3', 'type_name' : 'M'},
-        {'type_id' : '4', 'type_name' : 'L'},
-        {'type_id' : '5', 'type_name' : 'XL'},
-        {'type_id' : '6', 'type_name' : '26'},
-        {'type_id' : '7', 'type_name' : '27'},
-        {'type_id' : '8', 'type_name' : '28'},
+        {'type_id' : '1', 'type_name' : 'T-Shirt'},
+        {'type_id' : '2', 'type_name' : 'Tank Top'},
+        {'type_id' : '3', 'type_name' : 'Sweatshirt'},
+        {'type_id' : '4', 'type_name' : 'Jeans'},
+        {'type_id' : '5', 'type_name' : 'Shorts'},
+        {'type_id' : '6', 'type_name' : 'Skirt'},
+        {'type_id' : '7', 'type_name' : 'Shoes'},
+        {'type_id' : '8', 'type_name' : 'Bracelet'},
     ],
 }

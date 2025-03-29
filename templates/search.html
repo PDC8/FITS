@@ -24,70 +24,54 @@
       <input type="text" id="item_name" name="item_name" placeholder="e.g. 'blue shirt'" />
 
       <label for="type_id">Type:</label>
-      <select id="type_id" name="type_id">
-        <option value="">All Types</option>
-        <option value="1">Shirt</option>
-        <option value="2">Pants</option>
-        <option value="3">Shoes</option>
-      </select>
+      <div class="checkbox-grid">
+        {% for type in types %}
+          <label class="checkbox-square">
+            <input type="checkbox" name="type_id" value="{{ type.type_id }}">
+            <span>{{ type.type_name }}</span>
+          </label>
+        {% endfor %}
+      </div>
 
       <label for="brand_id">Brand:</label>
-      <select id="brand_id" name="brand_id" multiple>
-        <option value="1">Nike</option>
-        <option value="2">Adidas</option>
-        <option value="3">Zara</option>
-        <option value="4">H&M</option>
-        <option value="5">Uniqlo</option>
-        <option value="6">Levi's</option>
-        <option value="7">Gucci</option>
-        <option value="8">Louis Vuitton</option>
-        <option value="9">Under Armour</option>
-        <option value="10">Puma</option>
-      </select>
+      <div class="checkbox-grid">
+        {% for brand in brands %}
+          <label class="checkbox-square">
+            <input type="checkbox" name="brand_id" value="{{ brand.brand_id }}">
+            <span>{{ brand.brand_name }}</span>
+          </label>
+        {% endfor %}
+      </div>
       
       <label for="size_id">Size:</label>
-      <select id="size_id" name="size_id" multiple>
-        <option value="1">XS</option>
-        <option value="2">S</option>
-        <option value="3">M</option>
-        <option value="4">L</option>
-        <option value="5">XL</option>
-        <option value="6">26</option>
-        <option value="7">27</option>
-        <option value="8">28</option>
-        <option value="9">29</option>
-        <option value="10">30</option>
-        <option value="11">31</option>
-        <option value="12">32</option>
-        <option value="13">33</option>
-        <option value="14">34</option>
-        <option value="15">35</option>
-      </select>      
+      <div class="checkbox-grid">
+        {% for size in sizes %}
+          <label class="checkbox-square">
+            <input type="checkbox" name="size_id" value="{{ size.size_id }}">
+            <span>{{ size.size_name }}</span>
+          </label>
+        {% endfor %}
+      </div>     
 
       <label for="color_id">Color:</label>
-      <select id="color_id" name="color_id" multiple>
-        <option value="1">Red</option>
-        <option value="2">Orange</option>
-        <option value="3">Yellow</option>
-        <option value="4">Green</option>
-        <option value="5">Blue</option>
-        <option value="6">Indigo</option>
-        <option value="7">Violet</option>
-      </select>
+      <div class="checkbox-grid">
+        {% for color in colors %}
+          <label class="checkbox-square">
+            <input type="checkbox" name="color_id" value="{{ color.color_id }}">
+            <span>{{ color.color_name }}</span>
+          </label>
+        {% endfor %}
+      </div>
 
       <label for="fabric_id">Fabric:</label>
-      <select id="fabric_id" name="fabric_id" multiple>
-        <option value="1">Cotton</option>
-        <option value="2">Linen</option>
-        <option value="3">Hemp</option>
-        <option value="4">Wool</option>
-        <option value="5">Cashmere</option>
-        <option value="6">Silk</option>
-        <option value="7">Polyester</option>
-        <option value="8">Nylon</option>
-        <option value="9">Spandex</option>
-        <option value="10">Acrylic</option>
-      </select>
+      <div class="checkbox-grid">
+        {% for fabric in fabrics %}
+          <label class="checkbox-square">
+            <input type="checkbox" name="fabric_id" value="{{ fabric.fabric_id }}">
+            <span>{{ fabric.fabric_name }}</span>
+          </label>
+        {% endfor %}
+      </div>
 
       <button type="submit">Find Items</button>
     </form>
@@ -98,6 +82,7 @@
       <p class="placeholder">No items found yet. Try searching.</p>
     </div>
   </main>
+
   <script>
     document.querySelector('.search-form').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -122,7 +107,7 @@
             itemCard.className = 'item-card';
             
             const imageContent = item.item_image 
-              ? `<img src="data:image/png;base64,${item.item_image}" alt="${item.item_name}" style="max-width:150px; max-height:150px;">`
+              ? `<img src="data:image/png;base64,${item.item_image}" alt="${item.item_name}">`
               : '<div class="no-image">No Image Available</div>';
 
             
