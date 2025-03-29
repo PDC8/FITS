@@ -177,11 +177,18 @@ def insert_into_table(table_name, data, return_id=False):
     
 def search_in_table(table_name, filters):
     """
-    Searches a given table based on filters
+    Search 'Clothing Items' based on user filters.
+    Bridging tables:
+      - "Clothing Colors" (with columns: c_color_id, item_id, color_id)
+      - "Clothing Fabrics" (with columns: c_fabric_id, item_id, fabric_id)
+    Main table:
+      - "Clothing Items" (with columns: item_id, item_name, brand_id, size_id, type_id, item_image, etc.)
 
-    Args:
-        table_name (str): Name of table to query
-        filters (dict): Column name : search value (can be 1 value or a list of values)
+    The user can filter by:
+      item_name (partial match, ILIKE)
+      brand_id, size_id, type_id (IN matching)
+      color_id (IN matching via "Clothing Colors")
+      fabric_id (IN matching via "Clothing Fabrics")
     """
     try:
         with psycopg2.connect(
@@ -191,36 +198,81 @@ def search_in_table(table_name, filters):
             port=PORT,
             dbname=DBNAME
         ) as connection:
-            
-            print("Connection successful!")
-
             with connection.cursor() as cursor:
+                # Start from the main table "Clothing Items" (aliased as ci)
+                base_query = """
+                    SELECT DISTINCT ci.*
+                    FROM "Clothing Items" ci
+                """
+
+                # We only join bridging tables if user selected color or fabric
+                joined_color = False
+                joined_fabric = False
+
+                # If color_id is provided and not empty, join "Clothing Colors"
+                if 'color_id' in filters and len(filters['color_id']) > 0 and filters['color_id'][0] != '':
+                    base_query += """
+                    JOIN "Clothing Colors" cc ON cc.item_id = ci.item_id
+                    """
+                    joined_color = True
+
+                # If fabric_id is provided and not empty, join "Clothing Fabrics"
+                if 'fabric_id' in filters and len(filters['fabric_id']) > 0 and filters['fabric_id'][0] != '':
+                    base_query += """
+                    JOIN "Clothing Fabrics" cf ON cf.item_id = ci.item_id
+                    """
+                    joined_fabric = True
+
+                # Build WHERE conditions
                 conditions = []
                 params = []
-                for key, value in filters.items():
-                    if isinstance(value, list):
-                        placeholders = sql.SQL(', ').join(sql.Placeholder() * len(value))
-                        conditions.append(sql.SQL("{col} IN ({vals})").format(
-                            col=sql.Identifier(key),
-                            vals=placeholders
-                        ))
-                        params.extend(value)
-                    else:
-                        conditions.append(sql.SQL("{col} = %s").format(col=sql.Identifier(key)))
-                        params.append(value)
-                where_clause = sql.SQL(' AND ').join(conditions) if conditions else sql.SQL('1=1')
-                query = sql.SQL("SELECT * FROM {table} WHERE {where}").format(
-                    table=sql.Identifier(table_name),
-                    where=where_clause
-                )
-                cursor.execute(query, params)
+
+                # 1) item_name partial match
+                if 'item_name' in filters and len(filters['item_name']) > 0 and filters['item_name'][0] != '':
+                    conditions.append("ci.item_name ILIKE %s")
+                    params.append(f"%{filters['item_name'][0]}%")
+
+                # 2) brand_id, size_id, type_id => normal columns on "Clothing Items"
+                for col_name in ['brand_id', 'size_id', 'type_id']:
+                    if col_name in filters:
+                        valid_vals = [v for v in filters[col_name] if v != '']  # remove empty
+                        if valid_vals:
+                            placeholders = ",".join(["%s"] * len(valid_vals))
+                            conditions.append(f"ci.{col_name} IN ({placeholders})")
+                            params.extend(valid_vals)
+
+                # 3) color_id => bridging table "Clothing Colors" (alias cc)
+                if joined_color:
+                    valid_colors = [v for v in filters['color_id'] if v != '']
+                    if valid_colors:
+                        placeholders = ",".join(["%s"] * len(valid_colors))
+                        conditions.append(f"cc.color_id IN ({placeholders})")
+                        params.extend(valid_colors)
+
+                # 4) fabric_id => bridging table "Clothing Fabrics" (alias cf)
+                if joined_fabric:
+                    valid_fabrics = [v for v in filters['fabric_id'] if v != '']
+                    if valid_fabrics:
+                        placeholders = ",".join(["%s"] * len(valid_fabrics))
+                        conditions.append(f"cf.fabric_id IN ({placeholders})")
+                        params.extend(valid_fabrics)
+
+                # Combine conditions
+                if conditions:
+                    base_query += " WHERE " + " AND ".join(conditions)
+
+                # Run the final query
+                cursor.execute(base_query, params)
                 columns = [desc[0] for desc in cursor.description]
-                results = [dict(zip(columns, row)) for row in cursor.fetchall()]
-                print(results)
+                rows = cursor.fetchall()
+                results = [dict(zip(columns, row)) for row in rows]
                 return results
+
     except Exception as e:
-        print(f"Error searching {table_name}: {e}")
+        print("Error searching bridging tables:", e)
         return []
+
+
 
 def get_random_clothing_item(clothing_type):
     """

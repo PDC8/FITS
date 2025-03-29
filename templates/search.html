@@ -31,6 +31,64 @@
         <option value="3">Shoes</option>
       </select>
 
+      <label for="brand_id">Brand:</label>
+      <select id="brand_id" name="brand_id" multiple>
+        <option value="1">Nike</option>
+        <option value="2">Adidas</option>
+        <option value="3">Zara</option>
+        <option value="4">H&M</option>
+        <option value="5">Uniqlo</option>
+        <option value="6">Levi's</option>
+        <option value="7">Gucci</option>
+        <option value="8">Louis Vuitton</option>
+        <option value="9">Under Armour</option>
+        <option value="10">Puma</option>
+      </select>
+      
+      <label for="size_id">Size:</label>
+      <select id="size_id" name="size_id" multiple>
+        <option value="1">XS</option>
+        <option value="2">S</option>
+        <option value="3">M</option>
+        <option value="4">L</option>
+        <option value="5">XL</option>
+        <option value="6">26</option>
+        <option value="7">27</option>
+        <option value="8">28</option>
+        <option value="9">29</option>
+        <option value="10">30</option>
+        <option value="11">31</option>
+        <option value="12">32</option>
+        <option value="13">33</option>
+        <option value="14">34</option>
+        <option value="15">35</option>
+      </select>      
+
+      <label for="color_id">Color:</label>
+      <select id="color_id" name="color_id" multiple>
+        <option value="1">Red</option>
+        <option value="2">Orange</option>
+        <option value="3">Yellow</option>
+        <option value="4">Green</option>
+        <option value="5">Blue</option>
+        <option value="6">Indigo</option>
+        <option value="7">Violet</option>
+      </select>
+
+      <label for="fabric_id">Fabric:</label>
+      <select id="fabric_id" name="fabric_id" multiple>
+        <option value="1">Cotton</option>
+        <option value="2">Linen</option>
+        <option value="3">Hemp</option>
+        <option value="4">Wool</option>
+        <option value="5">Cashmere</option>
+        <option value="6">Silk</option>
+        <option value="7">Polyester</option>
+        <option value="8">Nylon</option>
+        <option value="9">Spandex</option>
+        <option value="10">Acrylic</option>
+      </select>
+
       <button type="submit">Find Items</button>
     </form>
 
@@ -64,8 +122,9 @@
             itemCard.className = 'item-card';
             
             const imageContent = item.item_image 
-              ? `<img src="data:image/png;base64,${item.item_image}" alt="${item.item_name}">`
+              ? `<img src="data:image/png;base64,${item.item_image}" alt="${item.item_name}" style="max-width:150px; max-height:150px;">`
               : '<div class="no-image">No Image Available</div>';
+
             
             itemCard.innerHTML = `
               <div class="item-image">${imageContent}</div>

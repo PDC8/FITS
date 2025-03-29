@@ -91,6 +91,10 @@ def search_clothing():
     try:
         # Use query parameters as filter
         filters = request.args.to_dict(flat=False)
+        # For "All Types" selected change it to type_id in [1,2,3]
+        if 'type_id' in filters and filters['type_id'] == [""]:
+            filters['type_id'] = ["1", "2", "3"]
+            
         results = search_in_table('Clothing Items', filters)
         for item in results:
             if item.get('item_image'):
@@ -99,6 +103,7 @@ def search_clothing():
         return jsonify(results), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
 
 # Endpoint to generate random outfit
 @app.route('/api/outfit/random', methods=['GET'])
