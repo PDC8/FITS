@@ -4,8 +4,9 @@ Application to run flask and endpoints
 import urllib.request
 import urllib.error
 import base64
+import random
 
-from flask import Flask, render_template, request, make_response, jsonify, redirect, url_for
+from flask import Flask, render_template, request, jsonify, redirect, url_for
 from flask_cors import CORS
 from markupsafe import escape
 
@@ -18,9 +19,6 @@ from database import (
 )
 from default_values import default_tables
 
-import psycopg2
-from psycopg2 import sql, Binary
-import os
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
@@ -119,15 +117,17 @@ def search_clothing():
 @app.route('/api/outfit/random', methods=['GET'])
 def random_outfit():
     try:
-        # Define mapping from clothing category names to type_id values
         category_mapping = {
-            'top': 1,
-            'bottom': 2,
-            'shoes': 3
+            'tops': [1, 2, 3],  # T-Shirt, Tank Top, Sweatshirt
+            'bottoms': [4, 5, 6],  # Jeans, Shorts, Skirt
+            'shoes': [7],  # Shoes
         }
+
         outfit = {}
-        for category, type_id in category_mapping.items():
-            item = get_random_clothing_item(type_id)
+        for category, type_ids in category_mapping.items():
+            rand_id = random.choice(type_ids)
+            print(rand_id)
+            item = get_random_clothing_item(rand_id)
             if item:
                 if item.get('item_image'):
                     # Convert image bytes to a base64 string
