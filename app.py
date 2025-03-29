@@ -14,7 +14,8 @@ from database import (
     init_all_default_values, 
     insert_into_table, 
     search_in_table, 
-    get_random_clothing_item
+    get_random_clothing_item,
+    get_random_clothing_item_for_types
 )
 from default_values import default_tables
 
@@ -119,23 +120,27 @@ def search_clothing():
 @app.route('/api/outfit/random', methods=['GET'])
 def random_outfit():
     try:
-        # Define mapping from clothing category names to type_id values
+        # Map each category to list of types
+        # Tops: T-Shirt ('1'), Tank Top ('2'), Sweatshirt ('3')
+        # Bottoms: Jeans ('4'), Shorts ('5'), Skirt ('6')
+        # Shoes: Shoes ('7')
         category_mapping = {
-            'top': 1,
-            'bottom': 2,
-            'shoes': 3
+            'top': ['1', '2', '3'],
+            'bottom': ['4', '5', '6'],
+            'shoes': ['7']
         }
         outfit = {}
-        for category, type_id in category_mapping.items():
-            item = get_random_clothing_item(type_id)
+
+        for category, type_ids in category_mapping.items():
+            item = get_random_clothing_item_for_types(type_ids)
             if item:
                 if item.get('item_image'):
-                    # Convert image bytes to a base64 string
                     item['item_image'] = base64.b64encode(item['item_image']).decode('utf-8')
             outfit[category] = item
         return jsonify(outfit), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
     
 # # Endpoint to retrieve clothing image
 # @app.route('/api/clothing/image/<int:clothing_id>', methods=['GET'])

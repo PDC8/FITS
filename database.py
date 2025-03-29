@@ -302,3 +302,35 @@ def get_random_clothing_item(clothing_type):
     except Exception as e:
         print(f"Error fetching random {clothing_type}: {e}")
         return None
+
+def get_random_clothing_item_for_types(type_ids):
+    """
+    Fetches a random clothing item whose type_id is in the provided list.
+    
+    Args:
+        type_ids (list): List of type_ids (as strings) to choose from.
+    
+    Returns:
+        dict: A clothing item (as a dict) or None if no match.
+    """
+    try:
+        with psycopg2.connect(
+            user=USER,
+            password=PASSWORD,
+            host=HOST,
+            port=PORT,
+            dbname=DBNAME
+        ) as connection:
+            with connection.cursor() as cursor:
+                placeholders = ", ".join(["%s"] * len(type_ids))
+                query = sql.SQL("SELECT * FROM {table} WHERE type_id IN (" + placeholders + ") ORDER BY RANDOM() LIMIT 1").format(
+                    table=sql.Identifier('Clothing Items')
+                )
+                cursor.execute(query, type_ids)
+                columns = [desc[0] for desc in cursor.description]
+                row = cursor.fetchone()
+                return dict(zip(columns, row)) if row else None
+    except Exception as e:
+        print(f"Error fetching random clothing item for types {type_ids}: {e}")
+        return None
+
