@@ -155,11 +155,13 @@ def insert_into_table(table_name, data):
     
 def search_in_table(table_name, filters):
     """
-    Searches a given table based on filters
-
+    Searches a given table based on filters.
+    - Uses a partial, case-insensitive match for 'item_name'.
+    - Uses an IN clause for all other filters.
+    
     Args:
-        table_name (str): Name of table to query
-        filters (dict): Column name : search value (can be 1 value or a list of values)
+        table_name (str): Name of table to query.
+        filters (dict): Column name : search value (each value is a list).
     """
     try:
         with psycopg2.connect(
@@ -169,24 +171,29 @@ def search_in_table(table_name, filters):
             port=PORT,
             dbname=DBNAME
         ) as connection:
-            
             print("Connection successful!")
-
             with connection.cursor() as cursor:
                 conditions = []
                 params = []
                 for key, value in filters.items():
-                    if isinstance(value, list):
-                        placeholders = sql.SQL(', ').join(sql.Placeholder() * len(value))
+                    # Remove any empty strings from the list
+                    non_empty_values = [v for v in value if v != '']
+                    if not non_empty_values:
+                        continue
+
+                    if key == "item_name":
+                        # Use ILIKE for partial, case-insensitive match
+                        conditions.append(sql.SQL("{col} ILIKE %s").format(col=sql.Identifier(key)))
+                        params.append("%" + non_empty_values[0] + "%")
+                    else:
+                        # Build an IN clause for multi-select filters
+                        placeholders = sql.SQL(', ').join([sql.Placeholder()] * len(non_empty_values))
                         conditions.append(sql.SQL("{col} IN ({vals})").format(
                             col=sql.Identifier(key),
                             vals=placeholders
                         ))
-                        params.extend(value)
-                    else:
-                        conditions.append(sql.SQL("{col} = %s").format(col=sql.Identifier(key)))
-                        params.append(value)
-                where_clause = sql.SQL(' AND ').join(conditions) if conditions else sql.SQL('1=1')
+                        params.extend(non_empty_values)
+                where_clause = sql.SQL(" AND ").join(conditions) if conditions else sql.SQL("1=1")
                 query = sql.SQL("SELECT * FROM {table} WHERE {where}").format(
                     table=sql.Identifier(table_name),
                     where=where_clause
@@ -199,6 +206,7 @@ def search_in_table(table_name, filters):
     except Exception as e:
         print(f"Error searching {table_name}: {e}")
         return []
+
 
 def get_random_clothing_item(clothing_type):
     """
