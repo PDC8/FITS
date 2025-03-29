@@ -80,31 +80,81 @@
 
       <!-- Colors (from Colors table) - multiple selection possible -->
       <label for="color_id">Color(s):</label>
-      <select id="color_id" name="color_id" multiple>
-        <option value="1">Red</option>
-        <option value="2">Orange</option>
-        <option value="3">Yellow</option>
-        <option value="4">Green</option>
-        <option value="5">Blue</option>
-        <option value="6">Indigo</option>
-        <option value="7">Violet</option>
-        <!-- Add more from your Colors table -->
-      </select>
+      <div class="checkbox-grid">
+        <label class="checkbox-square">
+          <input type="checkbox" name="color_id" value="1">
+          <span>Red</span>
+        </label>
+        <label class="checkbox-square">
+          <input type="checkbox" name="color_id" value="2">
+          <span>Orange</span>
+        </label>
+        <label class="checkbox-square">
+          <input type="checkbox" name="color_id" value="3">
+          <span>Yellow</span>
+        </label>
+        <label class="checkbox-square">
+          <input type="checkbox" name="color_id" value="4">
+          <span>Green</span>
+        </label>
+        <label class="checkbox-square">
+          <input type="checkbox" name="color_id" value="5">
+          <span>Blue</span>
+        </label>
+        <label class="checkbox-square">
+          <input type="checkbox" name="color_id" value="6">
+          <span>Indigo</span>
+        </label>
+        <label class="checkbox-square">
+          <input type="checkbox" name="color_id" value="7">
+          <span>Violet</span>
+        </label>
+      </div>
 
       <!-- Fabrics (from Fabrics table) -->
-      <label for="fabric_id">Fabric:</label>
-      <select id="fabric_id" name="fabric_id" multiple>
-        <option value="1">Cotton</option>
-        <option value="2">Linen</option>
-        <option value="3">Hemp</option>
-        <option value="4">Wool</option>
-        <option value="5">Cashmere</option>
-        <option value="6">Silk</option>
-        <option value="7">Polyester</option>
-        <option value="8">Nylon</option>
-        <option value="9">Spandex</option>
-        <option value="10">Acrylic</option>
-      </select>
+      <label for="fabric_id">Fabric(s):</label>
+      <div class="checkbox-grid">
+        <label class="checkbox-square">
+          <input type="checkbox" name="fabric_id" value="1">
+          <span>Cotton</span>
+        </label>
+        <label class="checkbox-square">
+          <input type="checkbox" name="fabric_id" value="2">
+          <span>Linen</span>
+        </label>
+        <label class="checkbox-square">
+          <input type="checkbox" name="fabric_id" value="3">
+          <span>Hemp</span>
+        </label>
+        <label class="checkbox-square">
+          <input type="checkbox" name="fabric_id" value="4">
+          <span>Wool</span>
+        </label>
+        <label class="checkbox-square">
+          <input type="checkbox" name="fabric_id" value="5">
+          <span>Cashmere</span>
+        </label>
+        <label class="checkbox-square">
+          <input type="checkbox" name="fabric_id" value="6">
+          <span>Silk</span>
+        </label>
+        <label class="checkbox-square">
+          <input type="checkbox" name="fabric_id" value="7">
+          <span>Polyester</span>
+        </label>
+        <label class="checkbox-square">
+          <input type="checkbox" name="fabric_id" value="8">
+          <span>Nylon</span>
+        </label>
+        <label class="checkbox-square">
+          <input type="checkbox" name="fabric_id" value="9">
+          <span>Spandex</span>
+        </label>
+        <label class="checkbox-square">
+          <input type="checkbox" name="fabric_id" value="10">
+          <span>Acrylic</span>
+        </label>
+      </div>
 
       <!-- Optional file upload for images -->
       <label for="item_image">Upload Image:</label>
