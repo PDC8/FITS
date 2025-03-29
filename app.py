@@ -127,7 +127,6 @@ def random_outfit():
         outfit = {}
         for category, type_ids in category_mapping.items():
             rand_id = random.choice(type_ids)
-            print(rand_id)
             item = get_random_clothing_item(rand_id)
             if item:
                 if item.get('item_image'):
