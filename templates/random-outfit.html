@@ -44,8 +44,11 @@
         const outfitContainer = document.createElement('div');
         outfitContainer.className = 'outfit-container';
         
-        // Loop through each category and display the item details
-        for (const category in outfit) {
+        // Define the display order
+        const order = ['top', 'bottom', 'shoes'];
+        
+        // Loop through in fixed order
+        order.forEach(category => {
           const item = outfit[category];
           const itemDiv = document.createElement('div');
           itemDiv.className = 'outfit-item';
@@ -75,13 +78,13 @@
             itemDiv.innerHTML = `<h3>${category.toUpperCase()}</h3><p>No item available</p>`;
           }
           outfitContainer.appendChild(itemDiv);
-        }
+        });
         resultsDiv.appendChild(outfitContainer);
       } catch (error) {
         console.error('Error generating outfit:', error);
       }
     });
-  </script>
+  </script>  
   
 </body>
 </html>
