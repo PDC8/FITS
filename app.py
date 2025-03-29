@@ -16,7 +16,6 @@ from database import (
     insert_into_table, 
     search_in_table, 
     get_random_clothing_item,
-    get_random_clothing_item_for_types
 )
 from default_values import default_tables
 
