@@ -1,15 +1,27 @@
 """
 Application to run flask and endpoints
 """
-import urllib.request
-import urllib.error
+#imports for image upload and random fit
 import base64
 import random
-
-from flask import Flask, render_template, request, jsonify, redirect, url_for
+#imports for session_id
+import os
+from dotenv import load_dotenv
+#imports for flask basics
 from flask_cors import CORS
-from markupsafe import escape
-
+from flask import (
+    Flask, render_template, 
+    request, jsonify, 
+    redirect, url_for, session)
+#imports for CAS auth and login
+from flask_login import (
+    LoginManager, UserMixin, 
+    login_user, logout_user, 
+    login_required, current_user
+)
+from cas import CASClient
+#imports for database
+from default_values import default_tables
 from database import (
     get_from_table, 
     init_all_default_values, 
@@ -17,30 +29,84 @@ from database import (
     search_in_table, 
     get_random_clothing_item,
 )
-from default_values import default_tables
-
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
+load_dotenv()
+app.secret_key = os.getenv('SECRET_KEY')
+CORS(app)  #enable CORS for all routes
 
+#flask-Login
+login_manager = LoginManager(app)
+login_manager.login_view = 'login'
+
+#Yale CAS Configuration
+CAS_SERVER_URL = 'https://secure6.its.yale.edu/cas/login'
+CAS_SERVICE_URL = 'https://localhost:8000/login/callback' # TODO: Replace later if deployed
+
+#CAS Client
+cas_client = CASClient(
+    version=3,
+    service_url=CAS_SERVICE_URL,
+    server_url=CAS_SERVER_URL
+)
+
+#default tables from DB used for api
 brands=default_tables['Brands']
 sizes=default_tables['Sizes']
 types=default_tables['Clothing Types']
 colors=default_tables['Colors']
 fabrics=default_tables['Fabrics'] 
+ALL_TYPE_IDS = [t['type_id'] for t in types]
+
+class User(UserMixin):
+    def __init__(self, netid):
+        self.id = netid  # Use netid as ID temporarily
+        self.netid = netid
+
+@login_manager.user_loader
+def load_user(netid):
+    return User(netid)  # Temporary: No DB lookup
+
+
 @app.route('/')
 def home():
-    return render_template('index.html')
+    if current_user.is_authenticated:
+        return render_template('index.html')
+    else:
+        return render_template('login.html')
 
 @app.route('/login')
 def login():
-    return render_template('login.html')
+    cas_login_url = cas_client.get_login_url()
+    return redirect(cas_login_url)
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('home'))
+
+@app.route('/login/callback')
+def cas_callback():
+    ticket = request.args.get('ticket')
+    if not ticket:
+        return redirect(url_for('login'))  #no ticket provided
+    #validate ticket with CAS server
+    user, attributes, _ = cas_client.verify_ticket(ticket)
+    if not user:
+        return redirect(url_for('login'))  #invalid ticket
+    #log the user in
+    user_obj = User(user)
+    login_user(user_obj)
+    return redirect(url_for('home'))
+
 
 @app.route('/random-outfit')
+@login_required
 def random_fit():
     return render_template('random-outfit.html')
 
 @app.route('/search')
+@login_required
 def search():
     return render_template('search.html',
                            brands=brands,
@@ -51,6 +117,7 @@ def search():
                         )
 
 @app.route('/upload')
+@login_required
 def upload():
     return render_template('upload.html', 
                            brands=brands,
@@ -61,12 +128,13 @@ def upload():
                         )
 
 @app.route('/api/clothing', methods=['POST'])
+@login_required
 def create_clothing():
     try:
-        # Get uploaded file
+        #get uploaded file
         uploaded_file = request.files.get('item_image')
 
-        # Get form data
+        #get form data
         data = {
             'user_id' : request.form.get('user_id'),
             'item_name' : request.form.get('item_name'),
@@ -75,10 +143,10 @@ def create_clothing():
             'type_id': request.form.get('type_id'),
             'item_image': uploaded_file.read() if uploaded_file else None
         }
-        # Insert into Clothing Items Table and get primary key
+        #insert into Clothing Items Table and get primary key
         clothing_item_id = str(insert_into_table('Clothing Items', data, True))
         
-        # Insert into Clothing Colors and Clothing Fabrics Tables
+        #insert into Clothing Colors and Clothing Fabrics Tables
         color_ids = request.form.getlist('color_id')
         for id in color_ids:
             id = str(id)
@@ -93,35 +161,36 @@ def create_clothing():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# Endpoint to search clothing
+#endpoint to search clothing
 @app.route('/api/clothing', methods=['GET'])
+@login_required
 def search_clothing():
     try:
-        # Use query parameters as filter
+        #use query parameters as filter
         filters = request.args.to_dict(flat=False)
-        # For "All Types" selected change it to type_id in [1,2,3]
+        #get all type_ids
         if 'type_id' in filters and filters['type_id'] == [""]:
-            filters['type_id'] = ["1", "2", "3"]
-            
+            filters['type_id'] = ALL_TYPE_IDS
         results = search_in_table('Clothing Items', filters)
         for item in results:
             if item.get('item_image'):
-                # Convert bytes to base64 string
+                #convert bytes to base64 string
                 item['item_image'] = base64.b64encode(item['item_image']).decode('utf-8')
         return jsonify(results), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
 
-# Endpoint to generate random outfit
+#endpoint to generate random outfit
 @app.route('/api/outfit/random', methods=['GET'])
+@login_required
 def random_outfit():
     try:
-        # Define mapping from clothing category names to type_id values
+        #define mapping from clothing category names to type_id values
         category_mapping = {
-            'tops': [1, 2, 3],  # T-Shirt, Tank Top, Sweatshirt
-            'bottoms': [4, 5, 6],  # Jeans, Shorts, Skirt
-            'shoes': [7],  # Shoes
+            'tops': [1, 2, 3],  #T-Shirt, Tank Top, Sweatshirt
+            'bottoms': [4, 5, 6],  #Jeans, Shorts, Skirt
+            'shoes': [7],  #Shoes
         }
 
         outfit = {}

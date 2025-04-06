@@ -8,25 +8,17 @@
 </head>
 <body>
   <header>
-    <h1>Login</h1>
+    <h1>Closetify</h1>
   </header>
-  <nav class="main-nav">
-    <ul>
-      <!-- Back button to return to home -->
-      <li><a href="/">Back to home</a></li>
-    </ul>
-  </nav>
   <div class="login-container">
     <h1>Sign In</h1>
-    <form class="login-form" action="#" method="POST">
-      <label for="username">Email:</label>
-      <input type="email" id="username" name="username" required />
-
-      <label for="password">Password:</label>
-      <input type="password" id="password" name="password" required />
-
-      <button type="submit">Login</button>
-    </form>
+    <div class="cas-login">
+      <form class="cas-login-form" action="/login" method="GET">
+        <button type="submit" class="cas-button">
+          Sign in with Yale CAS
+        </button>
+      </form>
+    </div>
   </div>
 </body>
 </html>

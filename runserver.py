@@ -25,19 +25,19 @@ def main():
     Main function calls all the other functions to make it work
     """
     #parse cli and get the port from it
-    args = cli_parser()
+    # args = cli_parser()
 
-    # Check for valid port
-    try:
-        port_num = int(args.port)
-        if port_num <= 0:
-            print("Error: port must be a positive integer.", file=sys.stderr)
-            sys.exit(1)
-    except ValueError:
-        print("Error: port must be a positive integer.", file=sys.stderr)
-        sys.exit(1)
+    # # Check for valid port
+    # try:
+    #     port_num = int(args.port)
+    #     if port_num <= 0:
+    #         print("Error: port must be a positive integer.", file=sys.stderr)
+    #         sys.exit(1)
+    # except ValueError:
+    #     print("Error: port must be a positive integer.", file=sys.stderr)
+    #     sys.exit(1)
 
-    app.run(host='0.0.0.0', port=args.port)
+    app.run(host='0.0.0.0', port=8000, ssl_context='adhoc')
 
 if __name__ == "__main__":
     main()
