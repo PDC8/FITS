@@ -31,6 +31,8 @@ from database import (
     get_user_id,
     get_netid
 )
+# Import for image bg remvoer
+from rembg import remove
 
 app = Flask(__name__)
 load_dotenv()
@@ -140,6 +142,11 @@ def create_clothing():
         # Get uploaded file
         uploaded_file = request.files.get('item_image')
 
+        # Remove bg
+        if uploaded_file:
+            original_image = uploaded_file.read()
+            processed_image = remove(original_image)
+
         # Get form data
         data = {
             'user_id' : current_user.id,
@@ -147,7 +154,7 @@ def create_clothing():
             'brand_id' : request.form.get('brand_id'),
             'size_id' : request.form.get('size_id'),
             'type_id': request.form.get('type_id'),
-            'item_image': uploaded_file.read() if uploaded_file else None
+            'item_image': processed_image
         }
         # Insert into Clothing Items Table and get primary key
         clothing_item_id = str(insert_into_table('Clothing Items', data, True))
