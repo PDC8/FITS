@@ -233,7 +233,7 @@ def search_in_table(table_name, filters):
                     params.append(f"%{filters['item_name'][0]}%")
 
                 # 2) brand_id, size_id, type_id => normal columns on "Clothing Items"
-                for col_name in ['brand_id', 'size_id', 'type_id']:
+                for col_name in ['user_id', 'brand_id', 'size_id', 'type_id']:
                     if col_name in filters:
                         valid_vals = [v for v in filters[col_name] if v != '']  # remove empty
                         if valid_vals:
@@ -274,12 +274,13 @@ def search_in_table(table_name, filters):
 
 
 
-def get_random_clothing_item(clothing_type):
+def get_random_clothing_item(clothing_type, user_id):
     """
     Fetches a random clothing item given a clothing_type
 
     Args:
         clothing_type (int) : type_id of the clothing type
+        user_id (int) : user_id of the clothing
     """
     try:
         with psycopg2.connect(
@@ -293,12 +294,74 @@ def get_random_clothing_item(clothing_type):
             print("Connection successful!")
 
             with connection.cursor() as cursor:
-                query = sql.SQL("SELECT * FROM {table} WHERE type_id = %s ORDER BY RANDOM() LIMIT 1").format(
+                query = sql.SQL("SELECT * FROM {table} WHERE type_id = %s AND user_id = %s ORDER BY RANDOM() LIMIT 1").format(
                     table=sql.Identifier('Clothing Items')
                 )
-                cursor.execute(query, (clothing_type,))
+                cursor.execute(query, (clothing_type, user_id))
                 columns = [desc[0] for desc in cursor.description]
                 return dict(zip(columns, cursor.fetchone()))
     except Exception as e:
         print(f"Error fetching random {clothing_type}: {e}")
+        return None
+
+def get_user_id(netid):
+    """
+    Given netid, creates a new user_id if netid is new
+    or retrieves user_id from DB
+
+    Args:
+        netid (str) : Yale netid
+    """
+    try:
+        with psycopg2.connect(
+            user=USER,
+            password=PASSWORD,
+            host=HOST,
+            port=PORT,
+            dbname=DBNAME
+        ) as connection:
+            print("Connection successful!")
+            with connection.cursor() as cursor:
+                query = sql.SQL("""
+                    INSERT INTO {table} 
+                    (netid) VALUES (%s)
+                    ON CONFLICT (netid) DO UPDATE SET netid = EXCLUDED.netid
+                    RETURNING user_id
+                """).format(table=sql.Identifier('Users'))
+                
+                cursor.execute(query, (netid,))
+                user_id = cursor.fetchone()[0]
+                connection.commit()
+                return user_id
+    except Exception as e:
+        print(f"Error loading user_id: {e}")
+        return None
+    
+def get_netid(user_id):
+    """
+    Given user_id return the netid
+
+    Args:
+        user_id (str)
+    """
+    try:
+        with psycopg2.connect(
+            user=USER,
+            password=PASSWORD,
+            host=HOST,
+            port=PORT,
+            dbname=DBNAME
+        ) as connection:
+            print("Connection successful!")
+            with connection.cursor() as cursor:
+                query = sql.SQL("""
+                    SELECT netid FROM {table} 
+                    WHERE user_id = %s
+                """).format(table=sql.Identifier('Users'))
+                
+                cursor.execute(query, (user_id,))
+                netid = cursor.fetchone()[0]
+                return netid
+    except Exception as e:
+        print(f"Error loading netid: {e}")
         return None
