@@ -1,0 +1,58 @@
+/* base.css */
+:root {
+    /* Color Palette Variables */
+    --header-color: #A3B18A;        /* Header color (sage) */
+    --bg-color: #FEFAE0;            /* Background  color (cornsilk) */
+    --hover-color: #CCD5AE;         /* Hover color (tea green) */
+    --text-color: #EAF4F4;          /* FFE8D6 */  /* Text color (azure, champagne pink) */
+    --border-color: #6B705C;           /* Border color (reseda green) */
+    --item-card-color: #FAEDCD;       /* Item card color (papaya whip) */
+  }
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: var(--bg-color);
+  }
+  
+  header {
+    background-color: var(--header-color);
+    color: var(--text-color);
+    text-align: center;
+    height: 80px; /* might change later */
+  }
+  
+  .main-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 auto;
+    height: 100%;
+  }
+  
+  .nav-section {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    height: 100%;
+  }
+
+  .main-nav a {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 0 2rem;
+    color: var(--text-color);
+    text-decoration: none;
+  }
+  
+  .main-nav a:hover {
+    background-color: var(--hover-color);
+    height: 100%;
+  }
+
+  .logo {
+    /* Center logo */
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }

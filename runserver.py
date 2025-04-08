@@ -37,7 +37,7 @@ def main():
     #     print("Error: port must be a positive integer.", file=sys.stderr)
     #     sys.exit(1)
 
-    app.run(host='0.0.0.0', port=8000, ssl_context='adhoc')
+    app.run(host='0.0.0.0', port=8000, ssl_context='adhoc', debug=True)
 
 if __name__ == "__main__":
     main()

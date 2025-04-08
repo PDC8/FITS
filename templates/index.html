@@ -4,21 +4,25 @@
 <head>
   <meta charset="UTF-8" />
   <title>Digital Closet - Home</title>
+  <link rel="stylesheet" href="/static/base.css" />
   <link rel="stylesheet" href="/static/index.css" />
 </head>
 <body>
   <header>
-    <h1>Welcome to Your Digital Closet</h1>
+    <nav class="main-nav">
+      <div class="nav-section left-links">
+        <a href="/upload">Upload</a>
+        <a href="/random-outfit">Generate</a>
+      </div>
+      <div class="logo">
+        <img src="logo.png" alt="Logo">
+      </div>
+      <div class="nav-section right-links">
+        <a href="/search">Search</a>
+        <a href="/logout">Profile</a>
+      </div>
+    </nav>
   </header>
-
-  <nav class="main-nav">
-    <ul>
-      <li><a href="/upload">Upload Clothing</a></li>
-      <li><a href="/search">Search Closet</a></li>
-      <li><a href="/random-outfit">Generate Random Outfit</a></li>
-      <li><a href="/logout">Logout</a></li>
-    </ul>
-  </nav>
 
   <section class="info-section">
     <h2>Manage Your Wardrobe</h2>

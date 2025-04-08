@@ -13,6 +13,18 @@ HOST = os.getenv("host")
 PORT = os.getenv("port")
 DBNAME = os.getenv("dbname")
 
+def get_connection():
+    """
+    Creates and returns a PostgreSQL database connection.
+    """
+    return psycopg2.connect(
+        user=USER,
+        password=PASSWORD,
+        host=HOST,
+        port=PORT,
+        dbname=DBNAME
+    )
+
 def init_all_default_values(default_tables):
     """
     Initializes multiple tables of default values
@@ -31,16 +43,7 @@ def initialize_default_values(table_name, default_rows):
     """
     try:
         # Establish connection using context manager
-        with psycopg2.connect(
-            user=USER,
-            password=PASSWORD,
-            host=HOST,
-            port=PORT,
-            dbname=DBNAME
-        ) as connection:
-            
-            print("Connection successful!")
-        
+        with get_connection() as connection:
             with connection.cursor() as cursor:
                 for row in default_rows:
                     # Extract columns and values from the row
@@ -87,15 +90,7 @@ def get_from_table(table_name):
     table_name (str): name of the table
     """
     try:
-        with psycopg2.connect(
-            user=USER,
-            password=PASSWORD,
-            host=HOST,
-            port=PORT,
-            dbname=DBNAME
-        ) as connection:
-            
-            print("Connection successful!")
+        with get_connection() as connection:
 
             with connection.cursor() as cursor:
                 #Protect from SQL injections
@@ -122,15 +117,7 @@ def insert_into_table(table_name, data, return_id=False):
         data (dict): Column name : insert value pairs
     """
     try:
-        with psycopg2.connect(
-            user=USER,
-            password=PASSWORD,
-            host=HOST,
-            port=PORT,
-            dbname=DBNAME
-        ) as connection:
-            
-            print("Connection successful!")
+        with get_connection() as connection:
 
             with connection.cursor() as cursor:
                 # Convert binary data to PostgreSQL-compatible format
@@ -191,13 +178,7 @@ def search_in_table(table_name, filters):
       fabric_id (IN matching via "Clothing Fabrics")
     """
     try:
-        with psycopg2.connect(
-            user=USER,
-            password=PASSWORD,
-            host=HOST,
-            port=PORT,
-            dbname=DBNAME
-        ) as connection:
+        with get_connection() as connection:
             with connection.cursor() as cursor:
                 # Start from the main table "Clothing Items" (aliased as ci)
                 base_query = """
@@ -227,12 +208,12 @@ def search_in_table(table_name, filters):
                 conditions = []
                 params = []
 
-                # 1) item_name partial match
+                # 1 item_name partial match
                 if 'item_name' in filters and len(filters['item_name']) > 0 and filters['item_name'][0] != '':
                     conditions.append("ci.item_name ILIKE %s")
                     params.append(f"%{filters['item_name'][0]}%")
 
-                # 2) brand_id, size_id, type_id => normal columns on "Clothing Items"
+                # 2 brand_id, size_id, type_id => normal columns on "Clothing Items"
                 for col_name in ['user_id', 'brand_id', 'size_id', 'type_id']:
                     if col_name in filters:
                         valid_vals = [v for v in filters[col_name] if v != '']  # remove empty
@@ -241,7 +222,7 @@ def search_in_table(table_name, filters):
                             conditions.append(f"ci.{col_name} IN ({placeholders})")
                             params.extend(valid_vals)
 
-                # 3) color_id => bridging table "Clothing Colors" (alias cc)
+                # 3 color_id => bridging table "Clothing Colors" (alias cc)
                 if joined_color:
                     valid_colors = [v for v in filters['color_id'] if v != '']
                     if valid_colors:
@@ -249,7 +230,7 @@ def search_in_table(table_name, filters):
                         conditions.append(f"cc.color_id IN ({placeholders})")
                         params.extend(valid_colors)
 
-                # 4) fabric_id => bridging table "Clothing Fabrics" (alias cf)
+                # 4 fabric_id => bridging table "Clothing Fabrics" (alias cf)
                 if joined_fabric:
                     valid_fabrics = [v for v in filters['fabric_id'] if v != '']
                     if valid_fabrics:
@@ -283,13 +264,7 @@ def get_random_clothing_item(clothing_type, user_id):
         user_id (int) : user_id of the clothing
     """
     try:
-        with psycopg2.connect(
-            user=USER,
-            password=PASSWORD,
-            host=HOST,
-            port=PORT,
-            dbname=DBNAME
-        ) as connection:
+        with get_connection() as connection:
             
             print("Connection successful!")
 
@@ -313,13 +288,7 @@ def get_user_id(netid):
         netid (str) : Yale netid
     """
     try:
-        with psycopg2.connect(
-            user=USER,
-            password=PASSWORD,
-            host=HOST,
-            port=PORT,
-            dbname=DBNAME
-        ) as connection:
+        with get_connection() as connection:
             print("Connection successful!")
             with connection.cursor() as cursor:
                 query = sql.SQL("""
@@ -345,13 +314,7 @@ def get_netid(user_id):
         user_id (str)
     """
     try:
-        with psycopg2.connect(
-            user=USER,
-            password=PASSWORD,
-            host=HOST,
-            port=PORT,
-            dbname=DBNAME
-        ) as connection:
+        with get_connection() as connection:
             print("Connection successful!")
             with connection.cursor() as cursor:
                 query = sql.SQL("""

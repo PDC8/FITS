@@ -4,81 +4,88 @@
 <head>
   <meta charset="UTF-8" />
   <title>Search Closet - Digital Closet</title>
+  <link rel="stylesheet" href="/static/base.css" />
   <link rel="stylesheet" href="/static/search.css" />
 </head>
+
 <body>
   <header>
-    <h1>Search Your Closet</h1>
+    <nav class="main-nav">
+      <div class="nav-section left-links">
+        <a href="/upload">Upload</a>
+        <a href="/random-outfit">Generate</a>
+      </div>
+      <div class="logo">
+        <img src="logo.png" alt="Logo">
+      </div>
+      <div class="nav-section right-links">
+        <a href="/search">Search</a>
+        <a href="/logout">Profile</a>
+      </div>
+    </nav>
   </header>
 
-  <nav class="main-nav">
-    <ul>
-      <!-- Back button to return to home -->
-      <li><a href="/">Back to home</a></li>
-    </ul>
-  </nav>
-
   <main class="search-container">
+    <!-- Search and filter form -->
     <form class="search-form" action="/api/clothing" method="GET">
-      <label for="item_name">Search:</label>
-      <input type="text" id="item_name" name="item_name" placeholder="e.g. 'blue shirt'" />
-
-      <label for="type_id">Type:</label>
-      <div class="checkbox-grid">
-        {% for type in types %}
-          <label class="checkbox-square">
-            <input type="checkbox" name="type_id" value="{{ type.type_id }}">
-            <span>{{ type.type_name }}</span>
-          </label>
-        {% endfor %}
-      </div>
-
-      <label for="brand_id">Brand:</label>
-      <div class="checkbox-grid">
-        {% for brand in brands %}
-          <label class="checkbox-square">
-            <input type="checkbox" name="brand_id" value="{{ brand.brand_id }}">
-            <span>{{ brand.brand_name }}</span>
-          </label>
-        {% endfor %}
-      </div>
-      
-      <label for="size_id">Size:</label>
-      <div class="checkbox-grid">
-        {% for size in sizes %}
-          <label class="checkbox-square">
-            <input type="checkbox" name="size_id" value="{{ size.size_id }}">
-            <span>{{ size.size_name }}</span>
-          </label>
-        {% endfor %}
-      </div>     
-
-      <label for="color_id">Color:</label>
-      <div class="checkbox-grid">
-        {% for color in colors %}
-          <label class="checkbox-square">
-            <input type="checkbox" name="color_id" value="{{ color.color_id }}">
-            <span>{{ color.color_name }}</span>
-          </label>
-        {% endfor %}
-      </div>
-
-      <label for="fabric_id">Fabric:</label>
-      <div class="checkbox-grid">
-        {% for fabric in fabrics %}
-          <label class="checkbox-square">
-            <input type="checkbox" name="fabric_id" value="{{ fabric.fabric_id }}">
-            <span>{{ fabric.fabric_name }}</span>
-          </label>
-        {% endfor %}
-      </div>
-
+      <input type="text" id="item_name" name="item_name" placeholder="Search for T-Shirt" />
+      <button class="filter-toggle" type="button">Show Filters ▼</button>
+        <div class="filters hidden">
+          <label class="filter_header" for="type_id">Type:</label>
+          <div class="checkbox-grid">
+            {% for type in types %}
+              <label class="checkbox-square">
+                <input type="checkbox" name="type_id" value="{{ type.type_id }}">
+                <span>{{ type.type_name }}</span>
+              </label>
+            {% endfor %}
+          </div>
+    
+          <label class="filter_header" for="brand_id">Brand:</label>
+          <div class="checkbox-grid">
+            {% for brand in brands %}
+              <label class="checkbox-square">
+                <input type="checkbox" name="brand_id" value="{{ brand.brand_id }}">
+                <span>{{ brand.brand_name }}</span>
+              </label>
+            {% endfor %}
+          </div>
+          
+          <label class="filter_header" for="size_id">Size:</label>
+          <div class="checkbox-grid">
+            {% for size in sizes %}
+              <label class="checkbox-square">
+                <input type="checkbox" name="size_id" value="{{ size.size_id }}">
+                <span>{{ size.size_name }}</span>
+              </label>
+            {% endfor %}
+          </div>     
+    
+          <label class="filter_header" for="color_id">Color:</label>
+          <div class="checkbox-grid">
+            {% for color in colors %}
+              <label class="checkbox-square">
+                <input type="checkbox" name="color_id" value="{{ color.color_id }}">
+                <span>{{ color.color_name }}</span>
+              </label>
+            {% endfor %}
+          </div>
+    
+          <label class="filter_header" for="fabric_id">Fabric:</label>
+          <div class="checkbox-grid">
+            {% for fabric in fabrics %}
+              <label class="checkbox-square">
+                <input type="checkbox" name="fabric_id" value="{{ fabric.fabric_id }}">
+                <span>{{ fabric.fabric_name }}</span>
+              </label>
+            {% endfor %}
+          </div>
+        </div>
       <button type="submit">Find Items</button>
     </form>
 
     <!-- Results area -->
     <div class="search-results">
-      <!-- In real usage, populate results here from the database query. -->
       <p class="placeholder">No items found yet. Try searching.</p>
     </div>
   </main>
@@ -86,7 +93,6 @@
   <script>
     document.querySelector('.search-form').addEventListener('submit', async (e) => {
       e.preventDefault();
-      
       // Get form data
       const formData = new URLSearchParams(new FormData(e.target));
       
@@ -97,11 +103,7 @@
         const resultsDiv = document.querySelector('.search-results');
         resultsDiv.innerHTML = '';
         
-        if (items.length > 0) {
-          // Create grid container
-          const grid = document.createElement('div');
-          grid.className = 'results-grid';
-          
+        if (items.length > 0) {          
           items.forEach(item => {
             const itemCard = document.createElement('div');
             itemCard.className = 'item-card';
@@ -116,10 +118,8 @@
               <h3 class="item-name">${item.item_name}</h3>
             `;
             
-            grid.appendChild(itemCard);
+            resultsDiv.appendChild(itemCard);
           });
-          
-          resultsDiv.appendChild(grid);
         } else {
           resultsDiv.innerHTML = '<p class="no-results">No items found matching your search</p>';
         }
@@ -137,6 +137,11 @@
       } catch (error) {
         console.error('Error:', error);
       }
+    });
+    
+    document.querySelector('.filter-toggle').addEventListener('click', () => {
+      const filters = document.querySelector('.filters');
+      filters.classList.toggle('hidden');
     });
   </script>
   
