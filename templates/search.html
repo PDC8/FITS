@@ -20,6 +20,8 @@
       </div>
       <div class="nav-section right-links">
         <a href="/search">Search</a>
+        <!-- Optional: add a Sign Up link -->
+        <a href="/sign-up">Sign Up</a>
         <a href="/logout">Profile</a>
       </div>
     </nav>
@@ -30,59 +32,60 @@
     <form class="search-form" action="/api/clothing" method="GET">
       <input type="text" id="item_name" name="item_name" placeholder="Search for T-Shirt" />
       <button class="filter-toggle" type="button">Show Filters ▼</button>
-        <div class="filters hidden">
-          <label class="filter_header" for="type_id">Type:</label>
-          <div class="checkbox-grid">
-            {% for type in types %}
-              <label class="checkbox-square">
-                <input type="checkbox" name="type_id" value="{{ type.type_id }}">
-                <span>{{ type.type_name }}</span>
-              </label>
-            {% endfor %}
-          </div>
-    
-          <label class="filter_header" for="brand_id">Brand:</label>
-          <div class="checkbox-grid">
-            {% for brand in brands %}
-              <label class="checkbox-square">
-                <input type="checkbox" name="brand_id" value="{{ brand.brand_id }}">
-                <span>{{ brand.brand_name }}</span>
-              </label>
-            {% endfor %}
-          </div>
-          
-          <label class="filter_header" for="size_id">Size:</label>
-          <div class="checkbox-grid">
-            {% for size in sizes %}
-              <label class="checkbox-square">
-                <input type="checkbox" name="size_id" value="{{ size.size_id }}">
-                <span>{{ size.size_name }}</span>
-              </label>
-            {% endfor %}
-          </div>     
-    
-          <label class="filter_header" for="color_id">Color:</label>
-          <div class="checkbox-grid">
-            {% for color in colors %}
-              <label class="checkbox-square">
-                <input type="checkbox" name="color_id" value="{{ color.color_id }}">
-                <span>{{ color.color_name }}</span>
-              </label>
-            {% endfor %}
-          </div>
-    
-          <label class="filter_header" for="fabric_id">Fabric:</label>
-          <div class="checkbox-grid">
-            {% for fabric in fabrics %}
-              <label class="checkbox-square">
-                <input type="checkbox" name="fabric_id" value="{{ fabric.fabric_id }}">
-                <span>{{ fabric.fabric_name }}</span>
-              </label>
-            {% endfor %}
-          </div>
-          <button type="submit" id="clear-filters">Clear</button>
-          <button type="submit" id="apply-filters">Apply</button>
+      <div class="filters hidden">
+        <label class="filter_header" for="type_id">Type:</label>
+        <div class="checkbox-grid">
+          {% for type in types %}
+            <label class="checkbox-square">
+              <input type="checkbox" name="type_id" value="{{ type.type_id }}">
+              <span>{{ type.type_name }}</span>
+            </label>
+          {% endfor %}
         </div>
+  
+        <label class="filter_header" for="brand_id">Brand:</label>
+        <div class="checkbox-grid">
+          {% for brand in brands %}
+            <label class="checkbox-square">
+              <input type="checkbox" name="brand_id" value="{{ brand.brand_id }}">
+              <span>{{ brand.brand_name }}</span>
+            </label>
+          {% endfor %}
+        </div>
+        
+        <label class="filter_header" for="size_id">Size:</label>
+        <div class="checkbox-grid">
+          {% for size in sizes %}
+            <label class="checkbox-square">
+              <input type="checkbox" name="size_id" value="{{ size.size_id }}">
+              <span>{{ size.size_name }}</span>
+            </label>
+          {% endfor %}
+        </div>
+  
+        <label class="filter_header" for="color_id">Color:</label>
+        <div class="checkbox-grid">
+          {% for color in colors %}
+            <label class="checkbox-square">
+              <input type="checkbox" name="color_id" value="{{ color.color_id }}">
+              <span>{{ color.color_name }}</span>
+            </label>
+          {% endfor %}
+        </div>
+  
+        <label class="filter_header" for="fabric_id">Fabric:</label>
+        <div class="checkbox-grid">
+          {% for fabric in fabrics %}
+            <label class="checkbox-square">
+              <input type="checkbox" name="fabric_id" value="{{ fabric.fabric_id }}">
+              <span>{{ fabric.fabric_name }}</span>
+            </label>
+          {% endfor %}
+        </div>
+
+        <button type="submit" id="clear-filters">Clear</button>
+        <button type="submit" id="apply-filters">Apply</button>
+      </div>
     </form>
 
     <!-- Results area -->
@@ -94,9 +97,7 @@
   <script>
     document.querySelector('.search-form').addEventListener('submit', async (e) => {
       e.preventDefault();
-      // Get form data
       const formData = new URLSearchParams(new FormData(e.target));
-      
       try {
         const response = await fetch(`/api/clothing?${formData}`);
         const items = await response.json();
@@ -104,7 +105,7 @@
         const resultsDiv = document.querySelector('.search-results');
         resultsDiv.innerHTML = '';
         
-        if (items.length > 0) {          
+        if (items.length > 0) {
           items.forEach(item => {
             const itemCard = document.createElement('div');
             itemCard.className = 'item-card';
@@ -112,7 +113,6 @@
             const imageContent = item.item_image 
               ? `<img src="data:image/png;base64,${item.item_image}" alt="${item.item_name}">`
               : '<div class="no-image">No Image Available</div>';
-
             
             itemCard.innerHTML = `
               <div class="item-image">${imageContent}</div>
@@ -129,11 +129,9 @@
       }
     });
   
-    // Load all items on page load
     window.addEventListener('DOMContentLoaded', async () => {
       try {
-        const response = await fetch('/api/clothing');
-        const items = await response.json();
+        // By default, triggers a load of all items
         document.querySelector('.search-form').dispatchEvent(new Event('submit'));
       } catch (error) {
         console.error('Error:', error);
@@ -145,64 +143,48 @@
       filters.classList.toggle('hidden');
     });
 
-
     document.querySelector('#item_name').addEventListener('input', async (e) => {
-    const query = e.target.value; // Get the current value of the search bar
-    const formData = new URLSearchParams(new FormData(document.querySelector('.search-form')));
-    
-    try {
-      const response = await fetch(`/api/clothing?${formData}`);
-      const items = await response.json();
-      
-      const resultsDiv = document.querySelector('.search-results');
-      resultsDiv.innerHTML = '';
-      
-      if (items.length > 0) {
-        items.forEach(item => {
-          const itemCard = document.createElement('div');
-          itemCard.className = 'item-card';
-          
-          const imageContent = item.item_image 
-            ? `<img src="data:image/png;base64,${item.item_image}" alt="${item.item_name}">`
-            : '<div class="no-image">No Image Available</div>';
-          
-          itemCard.innerHTML = `
-            <div class="item-image">${imageContent}</div>
-            <h3 class="item-name">${item.item_name}</h3>
-          `;
-          
-          resultsDiv.appendChild(itemCard);
-        });
-      } else {
-        resultsDiv.innerHTML = '<p class="no-results">No items found matching your search</p>';
+      const formData = new URLSearchParams(new FormData(document.querySelector('.search-form')));
+      try {
+        const response = await fetch(`/api/clothing?${formData}`);
+        const items = await response.json();
+        const resultsDiv = document.querySelector('.search-results');
+        resultsDiv.innerHTML = '';
+        
+        if (items.length > 0) {
+          items.forEach(item => {
+            const itemCard = document.createElement('div');
+            itemCard.className = 'item-card';
+            const imageContent = item.item_image 
+              ? `<img src="data:image/png;base64,${item.item_image}" alt="${item.item_name}">`
+              : '<div class="no-image">No Image Available</div>';
+            itemCard.innerHTML = `
+              <div class="item-image">${imageContent}</div>
+              <h3 class="item-name">${item.item_name}</h3>
+            `;
+            resultsDiv.appendChild(itemCard);
+          });
+        } else {
+          resultsDiv.innerHTML = '<p class="no-results">No items found matching your search</p>';
+        }
+      } catch (error) {
+        console.error('Error:', error);
       }
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  });
+    });
 
+    const clearButton = document.querySelector('#clear-filters');
+    const applyButton = document.querySelector('#apply-filters');
+    const filtersSection = document.querySelector('.filters');
+    const filterInputs = document.querySelectorAll('.filters input[type="checkbox"]');
 
-  // Get references to the buttons and filters section
-  const clearButton = document.querySelector('#clear-filters');
-  const applyButton = document.querySelector('#apply-filters');
-  const filtersSection = document.querySelector('.filters');
-  const filterInputs = document.querySelectorAll('.filters input[type="checkbox"]');
+    clearButton.addEventListener('click', () => {
+      filterInputs.forEach(input => input.checked = false);
+      filtersSection.classList.add('hidden');
+    });
 
-  // Clear Filters Button
-  clearButton.addEventListener('click', () => {
-    // Uncheck all checkboxes
-    filterInputs.forEach(input => input.checked = false);
-
-    // Collapse the filters section
-    filtersSection.classList.add('hidden');
-  });
-
-  // Apply Filters Button
-  applyButton.addEventListener('click', () => {
-    // Collapse the filters section
-    filtersSection.classList.add('hidden');
-  });
+    applyButton.addEventListener('click', () => {
+      filtersSection.classList.add('hidden');
+    });
   </script>
-  
 </body>
 </html>

@@ -1,0 +1,99 @@
+<!-- generate-outfit.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Random Outfit - Digital Closet</title>
+  <link rel="stylesheet" href="/static/base.css" />
+  <link rel="stylesheet" href="/static/generate-outfit.css" />
+  <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
+</head>
+<body>
+  <header>
+    <nav class="main-nav">
+      <div class="nav-section left-links">
+        <a href="/upload">Upload</a>
+        <a href="/random-outfit">Generate</a>
+      </div>
+      <div class="logo">
+        <img src="logo.png" alt="Logo">
+      </div>
+      <div class="nav-section right-links">
+        <a href="/search">Search</a>
+        <!-- Optional: add a Sign Up link -->
+        <a href="/sign-up">Sign Up</a>
+        <a href="/logout">Profile</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="outfit-generator">
+    <div class="scroll-bar">
+      <p>search</p>
+    </div>
+    <div class="generate">
+      <button class="generate-btn" type="button">
+        Generate Outfit
+      </button>
+      <div class="outfit-canvas">
+        <p>canvas</p>
+      </div>
+    </div>
+  </main>
+  
+  <script>
+    document.querySelector('.generate-btn').addEventListener('click', async () => {
+      try {
+        const response = await fetch('/api/outfit/random');
+        const outfit = await response.json();
+        // If you want to display the returned outfit in the UI, 
+        // uncomment or adapt the code block below:
+        
+        // const resultsDiv = document.querySelector('.outfit-result');
+        // resultsDiv.innerHTML = ''; // Clear previous results
+        
+        // const outfitContainer = document.createElement('div');
+        // outfitContainer.className = 'outfit-container';
+        
+        // // Define display order
+        // const order = ['tops', 'bottoms', 'shoes'];
+        // order.forEach(category => {
+        //   const item = outfit[category];
+        //   const itemDiv = document.createElement('div');
+        //   itemDiv.className = 'outfit-item';
+        //   if (item) {
+        //     let html = `<h3>${category.toUpperCase()}</h3>`;
+        //     html += `<p><strong>Name:</strong> ${item.item_name}</p>`;
+        //     if (item.type_name) {
+        //       html += `<p><strong>Type:</strong> ${item.type_name}</p>`;
+        //     }
+        //     if (item.brand_name) {
+        //       html += `<p><strong>Brand:</strong> ${item.brand_name}</p>`;
+        //     }
+        //     if (item.size_name) {
+        //       html += `<p><strong>Size:</strong> ${item.size_name}</p>`;
+        //     }
+        //     if (item.color_names && item.color_names.length > 0) {
+        //       html += `<p><strong>Color(s):</strong> ${item.color_names.join(', ')}</p>`;
+        //     }
+        //     if (item.fabric_names && item.fabric_names.length > 0) {
+        //       html += `<p><strong>Fabric(s):</strong> ${item.fabric_names.join(', ')}</p>`;
+        //     }
+        //     if (item.item_image) {
+        //       html += `<img src="data:image/png;base64,${item.item_image}" alt="${item.item_name}" width="150">`;
+        //     }
+        //     itemDiv.innerHTML = html;
+        //   } else {
+        //     itemDiv.innerHTML = `<h3>${category.toUpperCase()}</h3><p>No item available</p>`;
+        //   }
+        //   outfitContainer.appendChild(itemDiv);
+        // });
+        // resultsDiv.appendChild(outfitContainer);
+      } catch (error) {
+        console.error('Error generating outfit:', error);
+      }
+    });
+  </script>  
+  
+</body>
+</html>

@@ -1,11 +1,4 @@
 /* index.css */
-
-/* Basic resets and styling */
-h1 {
-  margin: 0;
-}
-
-
 .info-section {
   max-width: 600px;
   margin: 2rem auto;
@@ -20,4 +13,3 @@ h1 {
   margin-bottom: 0.75rem;
   line-height: 1.5;
 }
-  

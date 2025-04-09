@@ -19,6 +19,8 @@
       </div>
       <div class="nav-section right-links">
         <a href="/search">Search</a>
+        <!-- Optional: add a Sign Up link -->
+        <a href="/sign-up">Sign Up</a>
         <a href="/logout">Profile</a>
       </div>
     </nav>
@@ -57,7 +59,7 @@
         {% endfor %}
       </select>
 
-      <!-- Colors (from Colors table) - multiple selection possible -->
+      <!-- Colors (from Colors table) -->
       <label class="filter_header" for="color_id">Color(s):</label>
       <div class="checkbox-grid">
         {% for color in colors %}
