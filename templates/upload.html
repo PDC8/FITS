@@ -9,24 +9,29 @@
 </head>
 <body>
   <header>
-    <h1>Upload a New Clothing Item</h1>
+    <nav class="main-nav">
+      <div class="nav-section left-links">
+        <a href="/upload">Upload</a>
+        <a href="/random-outfit">Generate</a>
+      </div>
+      <div class="logo">
+        <img src="logo.png" alt="Logo">
+      </div>
+      <div class="nav-section right-links">
+        <a href="/search">Search</a>
+        <a href="/logout">Profile</a>
+      </div>
+    </nav>
   </header>
-
-  <nav class="main-nav">
-    <ul>
-      <!-- Back button to return to home -->
-      <li><a href="/">Back to home</a></li>
-    </ul>
-  </nav>
 
   <main class="upload-container">
     <form class="upload-form" action="/api/clothing" method="POST" enctype="multipart/form-data">
       <!-- Clothing Name -->
-      <label for="item_name">Item Name:</label>
+      <label class="filter_header" for="item_name">Item Name:</label>
       <input type="text" id="item_name" name="item_name" required />
 
       <!-- Brand Selection (from Brands table) -->
-      <label for="brand_id">Brand:</label>
+      <label class="filter_header" for="brand_id">Brand:</label>
       <select id="brand_id" name="brand_id" required>
         <option value="" disabled selected>-- Select a Brand --</option>
         {% for brand in brands %}
@@ -35,7 +40,7 @@
       </select>
       
       <!-- Size (from Sizes table) -->
-      <label for="size_id">Size:</label>
+      <label class="filter_header" for="size_id">Size:</label>
       <select id="size_id" name="size_id" required>
         <option value="" disabled selected>-- Select a Size --</option>
         {% for size in sizes %}
@@ -44,7 +49,7 @@
       </select>
 
       <!-- Clothing Type (from Clothing Type table) -->
-      <label for="type_id">Type:</label>
+      <label class="filter_header" for="type_id">Type:</label>
       <select id="type_id" name="type_id" required>
         <option value="" disabled selected>-- Select a Clothing Type --</option>
         {% for type in types %}
@@ -53,7 +58,7 @@
       </select>
 
       <!-- Colors (from Colors table) - multiple selection possible -->
-      <label for="color_id">Color(s):</label>
+      <label class="filter_header" for="color_id">Color(s):</label>
       <div class="checkbox-grid">
         {% for color in colors %}
           <label class="checkbox-square">
@@ -64,7 +69,7 @@
       </div>
 
       <!-- Fabrics (from Fabrics table) -->
-      <label for="fabric_id">Fabric(s):</label>
+      <label class="filter_header" for="fabric_id">Fabric(s):</label>
       <div class="checkbox-grid">
         {% for fabric in fabrics %}
           <label class="checkbox-square">
@@ -75,7 +80,7 @@
       </div>
 
       <!-- Clothing Image -->
-      <label for="item_image">Upload Image:</label>
+      <label class="filter_header" for="item_image">Upload Image:</label>
       <input type="file" id="item_image" name="item_image" accept="image/*" required/>
       <button type="submit">Upload Item</button>
     </form>

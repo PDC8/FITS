@@ -1,4 +1,8 @@
 /* login.css */
+h1 {
+  color: var(--border-color);
+}
+
 .cas-button {
   display: flex;
   align-items: center;
@@ -6,7 +10,7 @@
   gap: 12px;
   width: 100%;
   padding: 15px 30px;
-  background-color: #00356B;
+  background-color: var(--header-color);
   color: white;
   border: none;
   border-radius: 8px;
@@ -17,7 +21,7 @@
 }
 
 .cas-button:hover {
-  background-color: #002147;
+  background-color: var(--hover-color);
   transform: translateY(-1px);
 }
 
@@ -35,8 +39,4 @@
   background: white;
 }
 
-h1 {
-  color: #00356B;
-  margin-bottom: 2rem;
-}
   
