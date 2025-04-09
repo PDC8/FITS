@@ -25,8 +25,27 @@
   </header>
 
   <main class="outfit-generator">
+    <!-- Preferences/Weather Input Field -->
+    <div class="preferences-container">
+      <label for="preferencesInput" class="preferences-label">
+        Preferences / Weather:
+      </label>
+      <input 
+        type="text" 
+        id="preferencesInput" 
+        name="preferencesInput" 
+        class="preferences-input" 
+        placeholder="E.g. sunny, formal, etc."
+      />
+    </div>
+
     <button class="generate-btn" type="button">
       Generate Outfit
+    </button>
+
+    <!-- Save Outfit Button -->
+    <button class="save-btn" type="button">
+      Save Outfit
     </button>
 
     <div class="outfit-result">
