@@ -80,8 +80,9 @@
               </label>
             {% endfor %}
           </div>
+          <button type="submit" id="clear-filters">Clear</button>
+          <button type="submit" id="apply-filters">Apply</button>
         </div>
-      <button type="submit">Find Items</button>
     </form>
 
     <!-- Results area -->
@@ -143,6 +144,64 @@
       const filters = document.querySelector('.filters');
       filters.classList.toggle('hidden');
     });
+
+
+    document.querySelector('#item_name').addEventListener('input', async (e) => {
+    const query = e.target.value; // Get the current value of the search bar
+    const formData = new URLSearchParams(new FormData(document.querySelector('.search-form')));
+    
+    try {
+      const response = await fetch(`/api/clothing?${formData}`);
+      const items = await response.json();
+      
+      const resultsDiv = document.querySelector('.search-results');
+      resultsDiv.innerHTML = '';
+      
+      if (items.length > 0) {
+        items.forEach(item => {
+          const itemCard = document.createElement('div');
+          itemCard.className = 'item-card';
+          
+          const imageContent = item.item_image 
+            ? `<img src="data:image/png;base64,${item.item_image}" alt="${item.item_name}">`
+            : '<div class="no-image">No Image Available</div>';
+          
+          itemCard.innerHTML = `
+            <div class="item-image">${imageContent}</div>
+            <h3 class="item-name">${item.item_name}</h3>
+          `;
+          
+          resultsDiv.appendChild(itemCard);
+        });
+      } else {
+        resultsDiv.innerHTML = '<p class="no-results">No items found matching your search</p>';
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  });
+
+
+  // Get references to the buttons and filters section
+  const clearButton = document.querySelector('#clear-filters');
+  const applyButton = document.querySelector('#apply-filters');
+  const filtersSection = document.querySelector('.filters');
+  const filterInputs = document.querySelectorAll('.filters input[type="checkbox"]');
+
+  // Clear Filters Button
+  clearButton.addEventListener('click', () => {
+    // Uncheck all checkboxes
+    filterInputs.forEach(input => input.checked = false);
+
+    // Collapse the filters section
+    filtersSection.classList.add('hidden');
+  });
+
+  // Apply Filters Button
+  applyButton.addEventListener('click', () => {
+    // Collapse the filters section
+    filtersSection.classList.add('hidden');
+  });
   </script>
   
 </body>

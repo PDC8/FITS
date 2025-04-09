@@ -1,11 +1,12 @@
-<!-- random-outfit.html -->
+<!-- generate-outfit.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <title>Random Outfit - Digital Closet</title>
   <link rel="stylesheet" href="/static/base.css" />
-  <link rel="stylesheet" href="/static/random-outfit.css" />
+  <link rel="stylesheet" href="/static/generate-outfit.css" />
+  <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
 </head>
 <body>
   <header>
@@ -25,17 +26,25 @@
   </header>
 
   <main class="outfit-generator">
-    <button class="generate-btn" type="button">
-      Generate Outfit
-    </button>
+    <div class="scroll-bar">
+      <p>search</p>
+    </div>
+    <div class="generate">
+      <button class="generate-btn" type="button">
+        Generate Outfit
+      </button>
+      <div class="outfit-canvas">
+        <p>canvas</p>
+      </div>
+    </div>
 
-    <div class="outfit-result">
+    <!-- <div class="outfit-result"> -->
       <!-- 
         When you click the button, the JavaScript will call the backend endpoint 
         and populate this container with the chosen items (e.g. top, bottom, shoes).
       -->
-      <p class="placeholder">Click "Generate Outfit" to see a new look!</p>
-    </div>
+      <!-- <p class="placeholder">Click "Generate Outfit" to see a new look!</p>
+    </div> -->
   </main>
   
   <script>

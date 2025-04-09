@@ -111,7 +111,7 @@ def cas_callback():
 @app.route('/random-outfit')
 @login_required
 def random_fit():
-    return render_template('random-outfit.html')
+    return render_template('generate-outfit.html')
 
 @app.route('/search')
 @login_required
