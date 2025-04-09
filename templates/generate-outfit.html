@@ -27,26 +27,17 @@
 
   <main class="outfit-generator">
     <div class="scroll-bar">
-      <p>search</p>
+      <div class="clothing-list"></div>
     </div>
     <div class="generate">
       <button class="generate-btn" type="button">
         Generate Outfit
       </button>
       <div class="outfit-canvas">
-        <p>canvas</p>
       </div>
     </div>
 
-    <!-- <div class="outfit-result"> -->
-      <!-- 
-        When you click the button, the JavaScript will call the backend endpoint 
-        and populate this container with the chosen items (e.g. top, bottom, shoes).
-      -->
-      <!-- <p class="placeholder">Click "Generate Outfit" to see a new look!</p>
-    </div> -->
   </main>
-  
   <script>
     document.querySelector('.generate-btn').addEventListener('click', async () => {
       try {
@@ -99,6 +90,125 @@
         console.error('Error generating outfit:', error);
       }
     });
+
+    let dragPreview = null;
+    let currentTarget = null;
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const response = await fetch('/api/clothing');
+        const items = await response.json();
+        const clothingList = document.querySelector('.clothing-list');
+        items.forEach(item => {
+          const itemDiv = document.createElement('div');
+          itemDiv.className = 'draggable-item';
+          itemDiv.dataset.itemId = item.item_id;
+          let html = '';
+          if (item.item_image) {
+            html += `<img src="data:image/png;base64,${item.item_image}" alt="${item.item_name}" width="100">`;
+          }
+          html += `<p>${item.item_name}</p>`;
+          itemDiv.innerHTML = html;
+          clothingList.appendChild(itemDiv);
+        });
+        initDraggables();
+      } catch (error) {
+        console.error('Error loading items:', error);
+      }
+    });
+
+  let originalParent = null;
+  let originalPosition = null;
+
+  function initDraggables() {
+    interact('.draggable-item').draggable({
+      modifiers: [
+        interact.modifiers.restrictRect({
+          restriction: 'body',
+          endOnly: true
+        })
+      ],
+      listeners: {
+        start(event) {
+          const target = event.target;
+          // Store original position
+          originalParent = target.parentNode;
+          originalPosition = {
+            x: target.offsetLeft,
+            y: target.offsetTop
+          };
+          
+          // Make item position fixed during drag
+          target.style.position = 'fixed';
+          target.style.zIndex = '10000';
+          target.style.width = `${target.offsetWidth}px`;
+
+          // Get current dimensions after setting fixed width
+          const width = target.offsetWidth;
+          const height = target.offsetHeight;
+          
+          // Calculate centered position based on mouse coordinates
+          const startX = event.clientX - width / 2;
+          const startY = event.clientY - height / 2;
+          
+          // Set initial position and update data attributes
+          target.style.left = `${startX}px`;
+          target.style.top = `${startY}px`;
+          target.dataset.x = startX;
+          target.dataset.y = startY;
+        },
+        move(event) {
+          const target = event.target;
+          // Update position during drag
+          const x = (parseFloat(target.dataset.x) || 0) + event.dx;
+          const y = (parseFloat(target.dataset.y) || 0) + event.dy;
+          
+          target.style.left = `${x}px`;
+          target.style.top = `${y}px`;
+          target.dataset.x = x;
+          target.dataset.y = y;
+        },
+        end(event) {
+          const target = event.target;
+          // Reset if not dropped in canvas
+          if (!target.classList.contains('in-canvas')) {
+            resetPosition(target);
+          }
+        }
+      }
+    });
+
+    interact('.outfit-canvas').dropzone({
+      accept: '.draggable-item',
+      ondrop: (event) => {
+        const canvas = event.target;
+        const target = event.relatedTarget;
+        const canvasRect = canvas.getBoundingClientRect();
+        
+        // Convert fixed position to canvas-relative
+        const x = parseFloat(target.style.left) - canvasRect.left;
+        const y = parseFloat(target.style.top) - canvasRect.top;
+        
+        // Position in canvas
+        target.style.position = 'absolute';
+        target.style.left = `${x}px`;
+        target.style.top = `${y}px`;
+        target.style.zIndex = 'auto';
+        target.classList.add('in-canvas');
+        
+        // Append to canvas
+        canvas.appendChild(target);
+      }
+    });
+  }
+
+  function resetPosition(target) {
+    // Return item to original position
+    target.style.position = 'static';
+    target.style.width = 'auto';
+    target.style.zIndex = 'auto';
+    originalParent.appendChild(target);
+    target.style.transform = `translate(${originalPosition.x}px, ${originalPosition.y}px)`;
+  }
   </script>  
   
 </body>

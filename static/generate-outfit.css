@@ -48,3 +48,30 @@
   color: #999;
   font-style: italic;
 }
+
+.clothing-list {
+  overflow-y: auto;
+  max-height: 80vh;
+  padding: 10px;
+}
+
+.draggable-item {
+  background: white;
+  padding: 10px;
+  margin: 10px;
+  border-radius: 8px;
+  cursor: move;
+  transition: opacity 0.3s;
+}
+
+.outfit-canvas {
+  min-height: 500px;
+  border: 2px dashed #ccc;
+  margin-top: 20px;
+  position: relative;
+}
+
+.save-btn {
+  background-color: #28a745;
+  margin-left: 10px;
+}
