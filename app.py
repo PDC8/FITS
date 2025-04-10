@@ -227,19 +227,20 @@ def random_outfit():
 @app.route('/api/clothing/<item_id>', methods=['DELETE'])
 @login_required
 def delete_clothing(item_id):
-    """
-    Endpoint to delete a clothing item. Only the owner of the item (current user)
-    can delete it.
-    """
     try:
-        # Attempt to delete the clothing item for the current user.
-        rows_deleted = delete_clothing_item(item_id, current_user.id)
+        # Convert the item_id to int to match the database column type.
+        item_id_int = int(item_id)
+        rows_deleted = delete_clothing_item(item_id_int, current_user.id)
         if rows_deleted:
             return jsonify({"message": "Clothing item deleted successfully."}), 200
         else:
             return jsonify({"error": "Clothing item not found or permission denied."}), 404
+    except ValueError:
+        # In case the item_id is not a valid number.
+        return jsonify({"error": "Invalid item id."}), 400
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
     
 @app.route('/delete')
 @login_required
