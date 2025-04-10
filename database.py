@@ -354,31 +354,30 @@ def delete_clothing_item(item_id, user_id):
         print(f"Error deleting clothing item: {e}")
         return 0
 
-def delete_clothing_item(item_id, user_id):
+def delete_clothing_item(item_id):
     """
-    Deletes a clothing item from the 'Clothing Items' table
-    if it belongs to the user. Cascade deletion in the database
-    will remove associated dependencies (e.g., colors, fabrics).
+    Deletes a clothing item from the 'Clothing Items' table based solely on its item_id.
+    Note: This function no longer checks for user ownership.
     
     Args:
         item_id (str or int): The ID of the clothing item.
-        user_id (str or int): The ID of the user.
-    
+        
     Returns:
         int: The number of rows deleted (1 if successful, 0 if not).
     """
     try:
         with get_connection() as connection:
             with connection.cursor() as cursor:
-                query = sql.SQL("DELETE FROM {table} WHERE item_id = %s AND user_id = %s").format(
+                query = sql.SQL("DELETE FROM {table} WHERE item_id = %s").format(
                     table=sql.Identifier("Clothing Items")
                 )
-                cursor.execute(query, (item_id, user_id))
+                cursor.execute(query, (item_id,))
                 connection.commit()
-                return cursor.rowcount  # Will be 1 if deletion happened, 0 otherwise.
+                return cursor.rowcount
     except Exception as e:
         print(f"Error deleting clothing item: {e}")
         return 0
+
 
 def get_all_outfits():
     """
