@@ -247,58 +247,6 @@ def delete_page():
     return render_template('delete.html', brands=brands, sizes=sizes, types=types, colors=colors, fabrics=fabrics)
 
 
-
-# Endpoint to save outfit
-@app.route('/api/outfits', methods=['POST'])
-@login_required
-def save_outfit():
-    try:
-        # Parse the request JSON
-        data = request.json
-        outfit_name = data.get('name', 'Unnamed Outfit')
-        items = data.get('items', [])
-
-        if not items:
-            return jsonify({'error': 'No items provided to save the outfit.'}), 400
-
-         # Step 1: Insert the outfit into the outfits table
-        outfit_data = {
-            'user_id': current_user.id,  # Assuming Flask-Login is used for user management
-            'outfit_name': outfit_name
-        }
-        outfit_id = insert_into_table('Outfits', outfit_data, return_col='outfit_id')
-        print(outfit_id, current_user.id)
-        # Step 2: Insert each item into the outfit_items table
-        for item in items:
-            outfit_item_data = {
-                'item_id': item['item_id'],
-                'outfit_id': outfit_id,
-                'position_x': item['position']['x'],
-                'position_y': item['position']['y']
-            }
-            insert_into_table('Outfit Items', outfit_item_data)
-
-        return jsonify({'message': 'Outfit saved successfully!', 'outfit_id': outfit_id}), 201
-
-    except Exception as e:
-        print(f"Error saving outfit: {e}")
-        return jsonify({'error': 'An error occurred while saving the outfit.'}), 500
-
-
-
-@app.route('/api/outfits', methods=['GET'])
-def get_outfits():
-    try:
-        # Fetch all outfits and their items from the database
-        print("HI")
-        outfits = get_all_outfits()
-        
-        return jsonify(outfits), 200
-    except Exception as e:
-        print(f"Error fetching outfits: {e}")
-        return jsonify({'error': 'Failed to fetch outfits'}), 500
-
-
 # Endpoint to save outfit
 @app.route('/api/outfits', methods=['POST'])
 @login_required
