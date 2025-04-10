@@ -6,6 +6,28 @@
   <title>Search Closet - Digital Closet</title>
   <link rel="stylesheet" href="/static/base.css" />
   <link rel="stylesheet" href="/static/search.css" />
+  <style>
+    .item-card {
+      position: relative;
+      padding-bottom: 3rem;
+    }
+    .delete-button {
+      position: absolute;
+      bottom: 0.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: var(--header-color);
+      color: var(--text-color);
+      border: none;
+      padding: 0.4rem 0.8rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .delete-button:hover {
+      background-color: var(--hover-color);
+    }
+  </style>
 </head>
 
 <body>
@@ -30,59 +52,59 @@
     <form class="search-form" action="/api/clothing" method="GET">
       <input type="text" id="item_name" name="item_name" placeholder="Search for T-Shirt" />
       <button class="filter-toggle" type="button">Show Filters ▼</button>
-        <div class="filters hidden">
-          <label class="filter_header" for="type_id">Type:</label>
-          <div class="checkbox-grid">
-            {% for type in types %}
-              <label class="checkbox-square">
-                <input type="checkbox" name="type_id" value="{{ type.type_id }}">
-                <span>{{ type.type_name }}</span>
-              </label>
-            {% endfor %}
-          </div>
-    
-          <label class="filter_header" for="brand_id">Brand:</label>
-          <div class="checkbox-grid">
-            {% for brand in brands %}
-              <label class="checkbox-square">
-                <input type="checkbox" name="brand_id" value="{{ brand.brand_id }}">
-                <span>{{ brand.brand_name }}</span>
-              </label>
-            {% endfor %}
-          </div>
-          
-          <label class="filter_header" for="size_id">Size:</label>
-          <div class="checkbox-grid">
-            {% for size in sizes %}
-              <label class="checkbox-square">
-                <input type="checkbox" name="size_id" value="{{ size.size_id }}">
-                <span>{{ size.size_name }}</span>
-              </label>
-            {% endfor %}
-          </div>     
-    
-          <label class="filter_header" for="color_id">Color:</label>
-          <div class="checkbox-grid">
-            {% for color in colors %}
-              <label class="checkbox-square">
-                <input type="checkbox" name="color_id" value="{{ color.color_id }}">
-                <span>{{ color.color_name }}</span>
-              </label>
-            {% endfor %}
-          </div>
-    
-          <label class="filter_header" for="fabric_id">Fabric:</label>
-          <div class="checkbox-grid">
-            {% for fabric in fabrics %}
-              <label class="checkbox-square">
-                <input type="checkbox" name="fabric_id" value="{{ fabric.fabric_id }}">
-                <span>{{ fabric.fabric_name }}</span>
-              </label>
-            {% endfor %}
-          </div>
-          <button type="submit" id="clear-filters">Clear</button>
-          <button type="submit" id="apply-filters">Apply</button>
+      <div class="filters hidden">
+        <label class="filter_header" for="type_id">Type:</label>
+        <div class="checkbox-grid">
+          {% for type in types %}
+            <label class="checkbox-square">
+              <input type="checkbox" name="type_id" value="{{ type.type_id }}">
+              <span>{{ type.type_name }}</span>
+            </label>
+          {% endfor %}
         </div>
+  
+        <label class="filter_header" for="brand_id">Brand:</label>
+        <div class="checkbox-grid">
+          {% for brand in brands %}
+            <label class="checkbox-square">
+              <input type="checkbox" name="brand_id" value="{{ brand.brand_id }}">
+              <span>{{ brand.brand_name }}</span>
+            </label>
+          {% endfor %}
+        </div>
+        
+        <label class="filter_header" for="size_id">Size:</label>
+        <div class="checkbox-grid">
+          {% for size in sizes %}
+            <label class="checkbox-square">
+              <input type="checkbox" name="size_id" value="{{ size.size_id }}">
+              <span>{{ size.size_name }}</span>
+            </label>
+          {% endfor %}
+        </div>     
+  
+        <label class="filter_header" for="color_id">Color:</label>
+        <div class="checkbox-grid">
+          {% for color in colors %}
+            <label class="checkbox-square">
+              <input type="checkbox" name="color_id" value="{{ color.color_id }}">
+              <span>{{ color.color_name }}</span>
+            </label>
+          {% endfor %}
+        </div>
+  
+        <label class="filter_header" for="fabric_id">Fabric:</label>
+        <div class="checkbox-grid">
+          {% for fabric in fabrics %}
+            <label class="checkbox-square">
+              <input type="checkbox" name="fabric_id" value="{{ fabric.fabric_id }}">
+              <span>{{ fabric.fabric_name }}</span>
+            </label>
+          {% endfor %}
+        </div>
+        <button type="submit" id="clear-filters">Clear</button>
+        <button type="submit" id="apply-filters">Apply</button>
+      </div>
     </form>
 
     <!-- Results area -->
@@ -92,68 +114,25 @@
   </main>
 
   <script>
-    document.querySelector('.search-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      // Get form data
-      const formData = new URLSearchParams(new FormData(e.target));
-      
+    // Function to send a DELETE request for an item and remove its card from the DOM on success.
+    async function deleteItem(itemId, cardElement) {
       try {
-        const response = await fetch(`/api/clothing?${formData}`);
-        const items = await response.json();
-        
-        const resultsDiv = document.querySelector('.search-results');
-        resultsDiv.innerHTML = '';
-        
-        if (items.length > 0) {          
-          items.forEach(item => {
-            const itemCard = document.createElement('div');
-            itemCard.className = 'item-card';
-            
-            const imageContent = item.item_image 
-              ? `<img src="data:image/png;base64,${item.item_image}" alt="${item.item_name}">`
-              : '<div class="no-image">No Image Available</div>';
-
-            
-            itemCard.innerHTML = `
-              <div class="item-image">${imageContent}</div>
-              <h3 class="item-name">${item.item_name}</h3>
-            `;
-            
-            resultsDiv.appendChild(itemCard);
-          });
+        const response = await fetch(`/api/clothing/${itemId}`, {
+          method: 'DELETE'
+        });
+        const result = await response.json();
+        if (response.ok) {
+          cardElement.remove();
         } else {
-          resultsDiv.innerHTML = '<p class="no-results">No items found matching your search</p>';
+          alert(result.error || 'Failed to delete item.');
         }
       } catch (error) {
-        console.error('Error:', error);
+        console.error('Error deleting item:', error);
       }
-    });
-  
-    // Load all items on page load
-    window.addEventListener('DOMContentLoaded', async () => {
-      try {
-        const response = await fetch('/api/clothing');
-        const items = await response.json();
-        document.querySelector('.search-form').dispatchEvent(new Event('submit'));
-      } catch (error) {
-        console.error('Error:', error);
-      }
-    });
-    
-    document.querySelector('.filter-toggle').addEventListener('click', () => {
-      const filters = document.querySelector('.filters');
-      filters.classList.toggle('hidden');
-    });
+    }
 
-
-    document.querySelector('#item_name').addEventListener('input', async (e) => {
-    const query = e.target.value; // Get the current value of the search bar
-    const formData = new URLSearchParams(new FormData(document.querySelector('.search-form')));
-    
-    try {
-      const response = await fetch(`/api/clothing?${formData}`);
-      const items = await response.json();
-      
+    // Function to render search results with delete buttons.
+    function renderItems(items) {
       const resultsDiv = document.querySelector('.search-results');
       resultsDiv.innerHTML = '';
       
@@ -161,48 +140,94 @@
         items.forEach(item => {
           const itemCard = document.createElement('div');
           itemCard.className = 'item-card';
-          
+          itemCard.dataset.itemId = item.item_id;  // store the id on the card
+
           const imageContent = item.item_image 
             ? `<img src="data:image/png;base64,${item.item_image}" alt="${item.item_name}">`
             : '<div class="no-image">No Image Available</div>';
-          
+
           itemCard.innerHTML = `
             <div class="item-image">${imageContent}</div>
             <h3 class="item-name">${item.item_name}</h3>
           `;
+          
+          // Create and append the delete button.
+          const deleteBtn = document.createElement('button');
+          deleteBtn.textContent = 'Delete';
+          deleteBtn.className = 'delete-button';
+          deleteBtn.addEventListener('click', () => {
+            if (confirm('Are you sure you want to delete this item?')) {
+              deleteItem(item.item_id, itemCard);
+            }
+          });
+          itemCard.appendChild(deleteBtn);
           
           resultsDiv.appendChild(itemCard);
         });
       } else {
         resultsDiv.innerHTML = '<p class="no-results">No items found matching your search</p>';
       }
-    } catch (error) {
-      console.error('Error:', error);
     }
-  });
 
+    // Function to load clothing items (either all or filtered)
+    async function loadItems(event) {
+      event.preventDefault();
+      const formData = new URLSearchParams(new FormData(event.target));
+      try {
+        const response = await fetch(`/api/clothing?${formData}`);
+        const items = await response.json();
+        renderItems(items);
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
 
-  // Get references to the buttons and filters section
-  const clearButton = document.querySelector('#clear-filters');
-  const applyButton = document.querySelector('#apply-filters');
-  const filtersSection = document.querySelector('.filters');
-  const filterInputs = document.querySelectorAll('.filters input[type="checkbox"]');
+    // Attach event listener to the search form.
+    document.querySelector('.search-form').addEventListener('submit', loadItems);
 
-  // Clear Filters Button
-  clearButton.addEventListener('click', () => {
-    // Uncheck all checkboxes
-    filterInputs.forEach(input => input.checked = false);
+    // Additionally, listen for input changes on the search text field.
+    document.querySelector('#item_name').addEventListener('input', async (e) => {
+      const formData = new URLSearchParams(new FormData(document.querySelector('.search-form')));
+      try {
+        const response = await fetch(`/api/clothing?${formData}`);
+        const items = await response.json();
+        renderItems(items);
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    });
 
-    // Collapse the filters section
-    filtersSection.classList.add('hidden');
-  });
+    // Toggle filter visibility
+    document.querySelector('.filter-toggle').addEventListener('click', () => {
+      const filters = document.querySelector('.filters');
+      filters.classList.toggle('hidden');
+    });
 
-  // Apply Filters Button
-  applyButton.addEventListener('click', () => {
-    // Collapse the filters section
-    filtersSection.classList.add('hidden');
-  });
+    // Clear and apply filter buttons
+    const clearButton = document.querySelector('#clear-filters');
+    const applyButton = document.querySelector('#apply-filters');
+    const filtersSection = document.querySelector('.filters');
+    const filterInputs = document.querySelectorAll('.filters input[type="checkbox"]');
+
+    clearButton.addEventListener('click', () => {
+      filterInputs.forEach(input => input.checked = false);
+      filtersSection.classList.add('hidden');
+    });
+
+    applyButton.addEventListener('click', () => {
+      filtersSection.classList.add('hidden');
+    });
+
+    // Load all items on page load.
+    window.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const response = await fetch('/api/clothing');
+        const items = await response.json();
+        renderItems(items);
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    });
   </script>
-  
 </body>
 </html>

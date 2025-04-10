@@ -328,3 +328,29 @@ def get_netid(user_id):
     except Exception as e:
         print(f"Error loading netid: {e}")
         return None
+
+def delete_clothing_item(item_id, user_id):
+    """
+    Deletes a clothing item from the 'Clothing Items' table
+    if it belongs to the user. Cascade deletion in the database
+    will remove associated dependencies (e.g., colors, fabrics).
+    
+    Args:
+        item_id (str or int): The ID of the clothing item.
+        user_id (str or int): The ID of the user.
+    
+    Returns:
+        int: The number of rows deleted (1 if successful, 0 if not).
+    """
+    try:
+        with get_connection() as connection:
+            with connection.cursor() as cursor:
+                query = sql.SQL("DELETE FROM {table} WHERE item_id = %s AND user_id = %s").format(
+                    table=sql.Identifier("Clothing Items")
+                )
+                cursor.execute(query, (item_id, user_id))
+                connection.commit()
+                return cursor.rowcount  # Will be 1 if deletion happened, 0 otherwise.
+    except Exception as e:
+        print(f"Error deleting clothing item: {e}")
+        return 0

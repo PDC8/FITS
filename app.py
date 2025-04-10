@@ -29,7 +29,8 @@ from database import (
     search_in_table, 
     get_random_clothing_item,
     get_user_id,
-    get_netid
+    get_netid,
+    delete_clothing_item
 )
 # Import for image bg remvoer
 from rembg import remove
@@ -219,6 +220,31 @@ def random_outfit():
         return jsonify(outfit), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+
+# Endpoint to delete clothing item
+@app.route('/api/clothing/<item_id>', methods=['DELETE'])
+@login_required
+def delete_clothing(item_id):
+    """
+    Endpoint to delete a clothing item. Only the owner of the item (current user)
+    can delete it.
+    """
+    try:
+        # Attempt to delete the clothing item for the current user.
+        rows_deleted = delete_clothing_item(item_id, current_user.id)
+        if rows_deleted:
+            return jsonify({"message": "Clothing item deleted successfully."}), 200
+        else:
+            return jsonify({"error": "Clothing item not found or permission denied."}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+@app.route('/delete')
+@login_required
+def delete_page():
+    return render_template('delete.html', brands=brands, sizes=sizes, types=types, colors=colors, fabrics=fabrics)
+
 
 
 #Testing database.py functions
