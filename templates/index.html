@@ -24,10 +24,50 @@
     </nav>
   </header>
 
-  <section class="info-section">
-    <h2>Manage Your Wardrobe</h2>
-    <p>Upload items, label them by category, brand, fabric, color, and more!</p>
-    <p>Search through your entire closet and generate random outfits with just a click.</p>
+  <section class="outfit-section">
+    <h2>All Outfits [can't get it to display proeprly with positioning yet :&#x28]</h2>
   </section>
 </body>
 </html>
+
+<script>
+  document.addEventListener('DOMContentLoaded', async () => {
+    try {
+      // Fetch all generated outfits from the backend
+      const response = await fetch('/api/outfits'); // API endpoint
+      const outfits = await response.json();
+
+      // Get the section where the outfits will be displayed
+      const outfitSection = document.querySelector('.outfit-section');
+
+      // Check if there are any outfits
+      if (!outfits || outfits.length === 0) {
+        outfitSection.innerHTML += '<p>No outfits have been generated yet.</p>';
+        return;
+      }
+
+      // Loop through the outfits and display them
+      outfits.forEach(outfit => {
+        const outfitHTML = `
+          <div class="outfit">
+            <h3>${outfit.outfit_name}</h3>
+            <div class="outfit-items">
+              ${outfit.items.map(item => `
+                <div class="outfit-item">
+                  <p>${item.item_name}</p>
+                  ${item.item_image ? `<img src="data:image/png;base64,${item.item_image}" alt="${item.item_name}" />` : ''}
+                  <p>Position: (${item.position_x}, ${item.position_y})</p>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+        outfitSection.innerHTML += outfitHTML;
+      });
+    } catch (error) {
+      console.error('Error fetching outfits:', error);
+      const outfitSection = document.querySelector('.outfit-section');
+      outfitSection.innerHTML = '<p>Failed to load outfits. Please try again later.</p>';
+    }
+  });
+</script>

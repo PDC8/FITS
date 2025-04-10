@@ -11,13 +11,24 @@
 .scroll-bar {
   background-color: var(--item-card-color);
   flex: 1;
+  overflow-y: auto;
+  max-height: 80vh;
 }
 
 .generate {
-  flex: 2;
+  flex: 3;
 }
 
-.generate-btn {
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.button-container .generate-btn,
+.button-container .save-btn,
+.button-container .clear-btn {
   background-color: var(--header-color);
   color: var(--text-color);
   border: none;
@@ -27,7 +38,9 @@
   font-size: 1rem;
 }
 
-.generate-btn:hover {
+.generate-btn:hover,
+.clear-btn:hover,
+.save-btn:hover {
   background-color: var(--hover-color);
 }
 
@@ -49,12 +62,6 @@
   font-style: italic;
 }
 
-.clothing-list {
-  overflow-y: auto;
-  max-height: 80vh;
-  padding: 10px;
-}
-
 .draggable-item {
   background: white;
   padding: 10px;
@@ -67,11 +74,5 @@
 .outfit-canvas {
   min-height: 500px;
   border: 2px dashed #ccc;
-  margin-top: 20px;
   position: relative;
-}
-
-.save-btn {
-  background-color: #28a745;
-  margin-left: 10px;
 }
