@@ -371,6 +371,7 @@ def delete_clothing_item(item_id):
                 query = sql.SQL("DELETE FROM {table} WHERE item_id = %s").format(
                     table=sql.Identifier("Clothing Items")
                 )
+                print(item_id)
                 cursor.execute(query, (item_id,))
                 connection.commit()
                 return cursor.rowcount
