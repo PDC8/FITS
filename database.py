@@ -1,4 +1,4 @@
-import psycopg2
+import psycopg2, base64
 from psycopg2 import sql, Binary
 from dotenv import load_dotenv
 import os
@@ -108,7 +108,7 @@ def get_from_table(table_name):
         if 'connection' in locals():
             connection.rollback()
 
-def insert_into_table(table_name, data, return_id=False):
+def insert_into_table(table_name, data, return_col=None):
     """
     Inserts data into any table
 
@@ -130,16 +130,16 @@ def insert_into_table(table_name, data, return_id=False):
                 # print(values)
                 cols_ident = sql.SQL(', ').join(map(sql.Identifier, columns))
                 vals_placeholders = sql.SQL(', ').join([sql.Placeholder()] * len(values))
-
-                if return_id:
+                if return_col:
                     query = sql.SQL("""
                         INSERT INTO {table} ({cols})
                         VALUES ({vals})
-                        RETURNING item_id
+                        RETURNING {return_col}
                     """).format(
                         table=sql.Identifier(table_name),
                         cols=cols_ident,
-                        vals=vals_placeholders
+                        vals=vals_placeholders,
+                        return_col=sql.Identifier(return_col)
                     )
                 else:
                     query = sql.SQL("""
@@ -151,11 +151,10 @@ def insert_into_table(table_name, data, return_id=False):
                         vals=vals_placeholders
                     )
                 cursor.execute(query, values)
-
-                if return_id:
-                    item_id = cursor.fetchone()[0]
+                if return_col:
+                    ret_id = cursor.fetchone()[0]
                     connection.commit()
-                    return item_id
+                    return ret_id
                 else:
                     connection.commit()
                     return True
@@ -354,3 +353,77 @@ def delete_clothing_item(item_id, user_id):
     except Exception as e:
         print(f"Error deleting clothing item: {e}")
         return 0
+
+def delete_clothing_item(item_id, user_id):
+    """
+    Deletes a clothing item from the 'Clothing Items' table
+    if it belongs to the user. Cascade deletion in the database
+    will remove associated dependencies (e.g., colors, fabrics).
+    
+    Args:
+        item_id (str or int): The ID of the clothing item.
+        user_id (str or int): The ID of the user.
+    
+    Returns:
+        int: The number of rows deleted (1 if successful, 0 if not).
+    """
+    try:
+        with get_connection() as connection:
+            with connection.cursor() as cursor:
+                query = sql.SQL("DELETE FROM {table} WHERE item_id = %s AND user_id = %s").format(
+                    table=sql.Identifier("Clothing Items")
+                )
+                cursor.execute(query, (item_id, user_id))
+                connection.commit()
+                return cursor.rowcount  # Will be 1 if deletion happened, 0 otherwise.
+    except Exception as e:
+        print(f"Error deleting clothing item: {e}")
+        return 0
+
+def get_all_outfits():
+    """
+    Fetch all outfits with their items grouped by outfit_id
+    """
+    try:
+        with get_connection() as connection:
+            with connection.cursor() as cursor:
+                query = sql.SQL("""
+                    SELECT 
+                        o.outfit_id,
+                        o.outfit_name,
+                        o.user_id,
+                        JSON_AGG(
+                            JSON_BUILD_OBJECT(
+                                'item_id', oi.item_id,
+                                'position_x', oi.position_x,
+                                'position_y', oi.position_y,
+                                'item_name', ci.item_name,
+                                'item_image', ENCODE(ci.item_image, 'base64')
+                            )
+                        ) AS items
+                    FROM 
+                        {outfits_table} o
+                    JOIN 
+                        {outfit_items_table} oi ON o.outfit_id = oi.outfit_id
+                    JOIN 
+                        {clothing_items_table} ci ON oi.item_id = ci.item_id
+                    GROUP BY 
+                        o.outfit_id, o.outfit_name, o.user_id
+                    ORDER BY 
+                        o.outfit_id
+                """).format(
+                    outfits_table=sql.Identifier('Outfits'),
+                    outfit_items_table=sql.Identifier('Outfit Items'),
+                    clothing_items_table=sql.Identifier('Clothing Items')
+                )
+
+                cursor.execute(query)
+                rows = cursor.fetchall()
+                columns = [desc[0] for desc in cursor.description]
+                results = [dict(zip(columns, row)) for row in rows]
+
+                return results
+
+    except Exception as e:
+        print(f"Error fetching outfits with items: {e}")
+        return []

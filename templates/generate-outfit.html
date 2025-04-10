@@ -26,98 +26,165 @@
   </header>
 
   <main class="outfit-generator">
-    <div class="scroll-bar">
-      <div class="clothing-list"></div>
-    </div>
+    <div class="scroll-bar"></div>
     <div class="generate">
-      <button class="generate-btn" type="button">
-        Generate Outfit
-      </button>
       <div class="outfit-canvas">
       </div>
+      <div class="button-container">
+        <button class="generate-btn" type="button">
+          Generate Outfit
+        </button>
+        <button class="clear-btn" type="button">
+          Clear
+        </button>
+        <button class="save-btn" type="button">
+          Save
+        </button>
+      </div>
     </div>
-
   </main>
+
   <script>
     document.querySelector('.generate-btn').addEventListener('click', async () => {
-      try {
-        const response = await fetch('/api/outfit/random');
-        const outfit = await response.json();
-        const resultsDiv = document.querySelector('.outfit-result');
-        resultsDiv.innerHTML = ''; // Clear previous results
-        
-        // Create a container to display the outfit
-        const outfitContainer = document.createElement('div');
-        outfitContainer.className = 'outfit-container';
-        
-        // Define the display order
-        const order = ['tops', 'bottoms', 'shoes'];
-        
-        // Loop through in fixed order
-        order.forEach(category => {
-          const item = outfit[category];
-          const itemDiv = document.createElement('div');
-          itemDiv.className = 'outfit-item';
-          if (item) {
-            let html = `<h3>${category.toUpperCase()}</h3>`;
-            html += `<p><strong>Name:</strong> ${item.item_name}</p>`;
-            if (item.type_name) {
-              html += `<p><strong>Type:</strong> ${item.type_name}</p>`;
-            }
-            if (item.brand_name) {
-              html += `<p><strong>Brand:</strong> ${item.brand_name}</p>`;
-            }
-            if (item.size_name) {
-              html += `<p><strong>Size:</strong> ${item.size_name}</p>`;
-            }
-            if (item.color_names && item.color_names.length > 0) {
-              html += `<p><strong>Color(s):</strong> ${item.color_names.join(', ')}</p>`;
-            }
-            if (item.fabric_names && item.fabric_names.length > 0) {
-              html += `<p><strong>Fabric(s):</strong> ${item.fabric_names.join(', ')}</p>`;
-            }
-            if (item.item_image) {
-              html += `<img src="data:image/png;base64,${item.item_image}" alt="${item.item_name}" width="150">`;
-            }
-            itemDiv.innerHTML = html;
-          } else {
-            itemDiv.innerHTML = `<h3>${category.toUpperCase()}</h3><p>No item available</p>`;
-          }
-          outfitContainer.appendChild(itemDiv);
-        });
-        resultsDiv.appendChild(outfitContainer);
-      } catch (error) {
-        console.error('Error generating outfit:', error);
-      }
-    });
+    try {
+      const response = await fetch('/api/outfit/random'); // Fetch random outfit from the API
+      const outfit = await response.json();
+      const canvas = document.querySelector('.outfit-canvas');
+      const scrollBar = document.querySelector('.scroll-bar');
 
-    let dragPreview = null;
-    let currentTarget = null;
-    document.addEventListener('DOMContentLoaded', async () => {
-      try {
-        const response = await fetch('/api/clothing');
-        const items = await response.json();
-        const clothingList = document.querySelector('.clothing-list');
-        items.forEach(item => {
+      // Return all items in the canvas back to the scroll bar
+      Array.from(canvas.children).forEach((item) => {
+        resetPosition(item);
+      });
+
+      // Clear the canvas
+      canvas.innerHTML = '';
+
+      // Define the display order and positions for the items
+      const order = ['tops', 'bottoms', 'shoes'];
+      const positions = [
+        { left: 50, top: 50 }, // Position for tops
+        { left: 50, top: 200 }, // Position for bottoms
+        { left: 50, top: 350 }, // Position for shoes
+      ];
+
+      // Loop through the categories and add items to the canvas
+      order.forEach((category, index) => {
+        const item = outfit[category];
+        if (item) {
+          // Find the corresponding item in the scroll bar
+          const itemInScrollBar = scrollBar.querySelector(`.draggable-item[data-item-id="${item.item_id}"]`);
+          if (itemInScrollBar) {
+            // Remove the item from the scroll bar
+            scrollBar.removeChild(itemInScrollBar);
+          }
+
+          // Create the HTML content for the item
           const itemDiv = document.createElement('div');
-          itemDiv.className = 'draggable-item';
+          itemDiv.className = 'draggable-item'; // Add draggable and in-canvas classes
           itemDiv.dataset.itemId = item.item_id;
-          let html = '';
+
+          let html = `<p>${item.item_name}</p>`;
           if (item.item_image) {
             html += `<img src="data:image/png;base64,${item.item_image}" alt="${item.item_name}" width="100">`;
           }
-          html += `<p>${item.item_name}</p>`;
           itemDiv.innerHTML = html;
-          clothingList.appendChild(itemDiv);
-        });
-        initDraggables();
-      } catch (error) {
-        console.error('Error loading items:', error);
-      }
+
+          // Position the item in the canvas
+          itemDiv.style.position = 'absolute';
+          itemDiv.style.left = `${positions[index].left}px`;
+          itemDiv.style.top = `${positions[index].top}px`;
+
+          // Append the item to the canvas
+          canvas.appendChild(itemDiv);
+        }
+      });
+    } catch (error) {
+      console.error('Error generating outfit:', error);
+    }
+  });
+
+  document.querySelector('.clear-btn').addEventListener('click', () => {
+    const canvas = document.querySelector('.outfit-canvas');
+    const scrollBar = document.querySelector('.scroll-bar');
+
+    // Return all items in the canvas back to the scroll bar
+    Array.from(canvas.children).forEach((item) => {
+      resetPosition(item);
     });
+
+    // Clear the canvas
+    canvas.innerHTML = '';
+  });
+
+  let dragPreview = null;
+  let currentTarget = null;
+  document.addEventListener('DOMContentLoaded', async () => {
+    try {
+      const response = await fetch('/api/clothing');
+      const items = await response.json();
+      const scrollBar = document.querySelector('.scroll-bar');
+      items.forEach(item => {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'draggable-item';
+        itemDiv.dataset.itemId = item.item_id;
+        let html = '';
+        if (item.item_image) {
+          html += `<img src="data:image/png;base64,${item.item_image}" alt="${item.item_name}" width="100">`;
+        }
+        html += `<p>${item.item_name}</p>`;
+        itemDiv.innerHTML = html;
+        scrollBar.appendChild(itemDiv);
+      });
+      initDraggables();
+    } catch (error) {
+      console.error('Error loading items:', error);
+    }
+  });
+
+  document.querySelector('.save-btn').addEventListener('click', async () => {
+    try {
+      const canvas = document.querySelector('.outfit-canvas');
+      const outfitItems = Array.from(canvas.children).map(item => {
+        return {
+          item_id: item.dataset.itemId,
+          position: {
+            x: parseFloat(item.style.left),
+            y: parseFloat(item.style.top)
+          }
+        };
+      });
+
+      if (outfitItems.length === 0) {
+        alert('Please add items to the canvas before saving!');
+        return;
+      }
+
+      const response = await fetch('/api/outfits', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: `Outfit ${new Date().toLocaleDateString()}`, // Default name
+          items: outfitItems
+        })
+      });
+
+      if (response.ok) {
+        alert('Outfit saved successfully!');
+      } else {
+        alert('Failed to save outfit');
+      }
+    } catch (error) {
+      console.error('Error saving outfit:', error);
+      alert('Error saving outfit');
+    }
+  });
 
   let originalParent = null;
   let originalPosition = null;
+  let originalScroll = null;
 
   function initDraggables() {
     interact('.draggable-item').draggable({
@@ -132,16 +199,25 @@
           const target = event.target;
           // Store original position
           originalParent = target.parentNode;
-          originalPosition = {
-            x: target.offsetLeft,
-            y: target.offsetTop
+          originalScroll = {
+            x: originalParent.scrollLeft,
+            y: originalParent.scrollTop
           };
           
           // Make item position fixed during drag
           target.style.position = 'fixed';
           target.style.zIndex = '10000';
           target.style.width = `${target.offsetWidth}px`;
-
+          
+          // Get position relative to parent including scroll
+          const rect = target.getBoundingClientRect();
+          const parentRect = originalParent.getBoundingClientRect();
+          
+          originalPosition = {
+            x: rect.left - parentRect.left + originalParent.scrollLeft,
+            y: rect.top - parentRect.top + originalParent.scrollTop
+          };
+          
           // Get current dimensions after setting fixed width
           const width = target.offsetWidth;
           const height = target.offsetHeight;
@@ -169,9 +245,19 @@
         },
         end(event) {
           const target = event.target;
-          // Reset if not dropped in canvas
-          if (!target.classList.contains('in-canvas')) {
-            resetPosition(target);
+          const canvas = document.querySelector('.outfit-canvas');
+          const canvasRect = canvas.getBoundingClientRect();
+          const targetRect = target.getBoundingClientRect();
+
+          // Check if the item is outside the canvas
+          const isOutsideCanvas =
+            targetRect.right < canvasRect.left ||
+            targetRect.left > canvasRect.right ||
+            targetRect.bottom < canvasRect.top ||
+            targetRect.top > canvasRect.bottom;
+          console.log('isOutsideCanvas:', isOutsideCanvas);
+          if (isOutsideCanvas || !target.classList.contains('in-canvas')) {
+            resetPosition(target); // Reset position if outside canvas
           }
         }
       }
@@ -203,11 +289,23 @@
 
   function resetPosition(target) {
     // Return item to original position
-    target.style.position = 'static';
+    target.style.position = 'relative'; 
     target.style.width = 'auto';
     target.style.zIndex = 'auto';
-    originalParent.appendChild(target);
-    target.style.transform = `translate(${originalPosition.x}px, ${originalPosition.y}px)`;
+    target.style.transform = 'none';  // Reset transform
+    
+    // Append the item back to the clothing list
+    const scrollBar = document.querySelector('.scroll-bar');
+    scrollBar.appendChild(target);
+    
+    // Restore scroll position first
+    originalParent.scrollTo(0, 0);
+    
+    // Use requestAnimationFrame to ensure proper positioning
+    requestAnimationFrame(() => {
+      target.style.left = `0px`;
+      target.style.top = `0px`;
+    });
   }
   </script>  
   
