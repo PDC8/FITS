@@ -46,13 +46,14 @@
       </div>
     </nav>
   </header>
-
+  
+  <div class="overlay"></div>
   <main class="search-container">
     <!-- Search and filter form -->
     <form class="search-form" action="/api/clothing" method="GET">
       <input type="text" id="item_name" name="item_name" placeholder="Search for T-Shirt" />
       <button class="filter-toggle" type="button">Show Filters ▼</button>
-      <div class="filters hidden">
+      <div class="filters">
         <label class="filter_header" for="type_id">Type:</label>
         <div class="checkbox-grid">
           {% for type in types %}
@@ -197,27 +198,6 @@
       }
     });
 
-    // Toggle filter visibility
-    document.querySelector('.filter-toggle').addEventListener('click', () => {
-      const filters = document.querySelector('.filters');
-      filters.classList.toggle('hidden');
-    });
-
-    // Clear and apply filter buttons
-    const clearButton = document.querySelector('#clear-filters');
-    const applyButton = document.querySelector('#apply-filters');
-    const filtersSection = document.querySelector('.filters');
-    const filterInputs = document.querySelectorAll('.filters input[type="checkbox"]');
-
-    clearButton.addEventListener('click', () => {
-      filterInputs.forEach(input => input.checked = false);
-      filtersSection.classList.add('hidden');
-    });
-
-    applyButton.addEventListener('click', () => {
-      filtersSection.classList.add('hidden');
-    });
-
     // Load all items on page load.
     window.addEventListener('DOMContentLoaded', async () => {
       try {
@@ -227,6 +207,37 @@
       } catch (error) {
         console.error('Error:', error);
       }
+    });
+
+    // Filter toggle functionality
+    document.querySelector('.filter-toggle').addEventListener('click', () => {
+      document.querySelector('.filters').classList.add('active');
+      document.querySelector('.overlay').style.display = 'block';
+      document.body.classList.add('overlay-active');
+    });
+
+    // Close filters when clicking overlay
+    document.querySelector('.overlay').addEventListener('click', () => {
+      document.querySelector('.filters').classList.remove('active');
+      document.querySelector('.overlay').style.display = 'none';
+      document.body.classList.remove('overlay-active');
+    });
+
+    // Update clear and apply buttons
+    const applyButton = document.querySelector('#apply-filters');
+    applyButton.addEventListener('click', () => {
+      document.querySelector('.filters').classList.remove('active');
+      document.querySelector('.overlay').style.display = 'none';
+      document.body.classList.remove('overlay-active');
+    });
+    
+    const clearButton = document.querySelector('#clear-filters');
+    const filterInputs = document.querySelectorAll('.filters input[type="checkbox"]');
+    clearButton.addEventListener('click', () => {
+      filterInputs.forEach(input => input.checked = false);
+      document.querySelector('.filters').classList.remove('active');
+      document.querySelector('.overlay').style.display = 'none';
+      document.body.classList.remove('overlay-active');
     });
   </script>
 </body>
