@@ -67,6 +67,7 @@
           </label>
         {% endfor %}
       </div>
+      <div id="color-error" class="error-message" style="display: none; color: red; margin-top: 8px;">Please select at least one color.</div>
 
       <!-- Fabrics (from Fabrics table) -->
       <label class="filter_header" for="fabric_id">Fabric(s):</label>
@@ -78,6 +79,7 @@
           </label>
         {% endfor %}
       </div>
+      <div id="fabric-error" class="error-message" style="display: none; color: red; margin-top: 8px;">Please select at least one fabric.</div>
 
       <!-- Clothing Image -->
       <label class="filter_header" for="item_image">Upload Image:</label>
@@ -85,5 +87,35 @@
       <button type="submit">Upload Item</button>
     </form>
   </main>
+
+  <script>
+    document.querySelector('.upload-form').addEventListener('submit', function(e) {
+        const colorChecked = document.querySelectorAll('input[name="color_id"]:checked').length;
+        const fabricChecked = document.querySelectorAll('input[name="fabric_id"]:checked').length;
+        let isValid = true;
+    
+        // Validate colors
+        const colorError = document.getElementById('color-error');
+        if (colorChecked === 0) {
+            colorError.style.display = 'block';
+            isValid = false;
+        } else {
+            colorError.style.display = 'none';
+        }
+    
+        // Validate fabrics
+        const fabricError = document.getElementById('fabric-error');
+        if (fabricChecked === 0) {
+            fabricError.style.display = 'block';
+            isValid = false;
+        } else {
+            fabricError.style.display = 'none';
+        }
+    
+        if (!isValid) {
+            e.preventDefault(); // Prevent form submission
+        }
+    });
+    </script>
 </body>
 </html>
