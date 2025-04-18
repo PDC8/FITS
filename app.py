@@ -78,7 +78,11 @@ def load_user(user_id):
 @app.route('/')
 def home():
     if current_user.is_authenticated:
-        return render_template('index.html')
+        outfits = get_all_outfits() 
+        for outfit in outfits:
+            for item in outfit['items']:
+                print('hi')
+        return render_template('index.html', outfits=outfits)
     else:
         return render_template('login.html')
 
@@ -289,7 +293,6 @@ def save_outfit():
 def get_outfits():
     try:
         # Fetch all outfits and their items from the database
-        print("HI")
         outfits = get_all_outfits()
         
         return jsonify(outfits), 200
