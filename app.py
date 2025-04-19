@@ -83,7 +83,7 @@ def load_user(user_id):
 @app.route('/')
 def home():
     if current_user.is_authenticated:
-        outfits = get_all_outfits() 
+        outfits = get_all_outfits(current_user.id) 
         return render_template('index.html', outfits=outfits)
     else:
         return render_template('login.html')
