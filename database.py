@@ -448,8 +448,8 @@ def add_friend(user_id, friend_id):
 
 def get_friends(user_id):
     """
-    Return list of (friend_id, netid) for all friends where either
-    friend_1 = user_id or friend_2 = user_id.
+    Return (friend_id, netid) only for mutual friendships—
+    i.e. where both (you→them) and (them→you) exist in Friends.
     """
     try:
         with get_connection() as conn:
@@ -458,15 +458,25 @@ def get_friends(user_id):
                     '''
                     SELECT f.friend_2 AS friend_id, u.netid
                       FROM "Friends" f
-                      JOIN "Users"   u ON u.user_id = f.friend_2
+                      JOIN "Users"   u
+                        ON u.user_id = f.friend_2
                      WHERE f.friend_1 = %s
-
+                       AND EXISTS (
+                         SELECT 1 FROM "Friends"
+                          WHERE friend_1 = f.friend_2
+                            AND friend_2 = f.friend_1
+                       )
                     UNION
-
                     SELECT f.friend_1 AS friend_id, u.netid
                       FROM "Friends" f
-                      JOIN "Users"   u ON u.user_id = f.friend_1
+                      JOIN "Users"   u
+                        ON u.user_id = f.friend_1
                      WHERE f.friend_2 = %s
+                       AND EXISTS (
+                         SELECT 1 FROM "Friends"
+                          WHERE friend_1 = f.friend_2
+                            AND friend_2 = f.friend_1
+                       )
                     ''',
                     (user_id, user_id)
                 )
@@ -474,6 +484,39 @@ def get_friends(user_id):
     except Exception as e:
         print(f"Error fetching friends: {e}")
         return []
+
+def get_friend_requests(user_id):
+    """
+    Pending requests where friend_2 = you but you haven't added them back.
+    """
+    try:
+        with get_connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    '''
+                    SELECT f.friend_1 AS requester_id, u.netid
+                      FROM "Friends" f
+                      JOIN "Users"   u
+                        ON u.user_id = f.friend_1
+                     WHERE f.friend_2 = %s
+                       AND NOT EXISTS (
+                         SELECT 1 FROM "Friends"
+                          WHERE friend_1 = %s
+                            AND friend_2 = f.friend_1
+                       )
+                    ''',
+                    (user_id, user_id)
+                )
+                return cur.fetchall()
+    except Exception as e:
+        print(f"Error fetching friend requests: {e}")
+        return []
+
+def accept_friend(requester_id, user_id):
+    """
+    Accept by inserting the reverse link (you → requester).
+    """
+    add_friend(user_id, requester_id)
 
 def get_all_users():
     """

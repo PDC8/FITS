@@ -37,8 +37,8 @@
     .dropdown-content button:hover { background:var(--hover-color); }
     main { padding:2rem; }
     #friends-list { margin-top:2rem; }
-    .friend-course { margin-bottom:1rem; }
-    .friend-course img { width:40px; margin-right:0.25rem; vertical-align:middle; }
+    .friend-outfit { margin-bottom:1rem; }
+    .friend-outfit img { width:40px; margin-right:0.25rem; vertical-align:middle; }
   </style>
 </head>
 <body>
@@ -58,8 +58,12 @@
   </header>
   <main>
     <div class="dropdown">
+        <button class="dropbtn">Requests ▾</button>
+        <div class="dropdown-content" id="requests-dropdown"></div>
+    </div>
+    <div class="dropdown">
       <button class="dropbtn">Friends' Outfits ▾</button>
-      <div class="dropdown-content" id="courses-dropdown"></div>
+      <div class="dropdown-content" id="outfits-dropdown"></div>
     </div>
     <div class="dropdown">
       <button class="dropbtn">Add Friend ▾</button>
@@ -80,11 +84,11 @@
     }
     async function loadCourses(){
       const os=await fetchJSON('/api/friends/outfits');
-      const dd=document.getElementById('courses-dropdown');
+      const dd=document.getElementById('outfits-dropdown');
       dd.innerHTML='';
       os.forEach(o=>{
         let c=document.createElement('div');
-        c.className='friend-course';
+        c.className='friend-outfit';
         let s=document.createElement('strong');
         s.textContent=o.outfit_name;
         c.appendChild(s);
@@ -95,6 +99,29 @@
         });
         dd.appendChild(c);
       });
+    }
+    async function loadRequests(){
+        const rs = await fetchJSON('/api/friend-requests');
+        const dd = document.getElementById('requests-dropdown');
+        dd.innerHTML = '';
+        rs.forEach(r => {
+            const row = document.createElement('div');
+            row.style.display = 'flex';
+            row.style.justifyContent = 'space-between';
+            row.style.marginBottom = '0.5rem';
+            row.innerHTML = `<span>${r.netid}</span>
+                            <button data-id="${r.requester_id}">Accept</button>`;
+            row.querySelector('button').onclick = async () => {
+            await fetchJSON('/api/friends/accept', {
+                method:'POST',
+                headers:{'Content-Type':'application/json'},
+                body: JSON.stringify({requester_id: r.requester_id})
+            });
+            loadRequests();
+            loadFriends();
+            };
+            dd.appendChild(row);
+        });
     }
     document.getElementById('add-friend-btn').onclick=async()=>{
       let n=document.getElementById('friend-netid-input').value.trim();
@@ -108,9 +135,13 @@
         body:JSON.stringify({friend_id:u.user_id})
       });
       document.getElementById('friend-netid-input').value='';
-      loadFriends();loadCourses();
+      loadFriends();loadOutfits();
     };
-    window.onload=()=>{loadFriends();loadCourses();};
+    window.onload = () => {
+        loadRequests();
+        loadFriends();
+        loadOutfits();
+    };
   </script>
 </body>
 </html>

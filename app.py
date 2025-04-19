@@ -34,7 +34,9 @@ from database import (
     get_all_outfits,
     add_friend,
     get_friends,
-    get_all_users
+    get_all_users,
+    get_friend_requests,
+    accept_friend
 )
 # Import for image bg remvoer
 from rembg import remove
@@ -335,6 +337,25 @@ def get_friends_outfits_route():
 @login_required
 def friends_page():
     return render_template('friends.html')
+
+@app.route('/api/friend-requests', methods=['GET'])
+@login_required
+def friend_requests_route():
+    reqs = get_friend_requests(current_user.id)
+    return jsonify([{'requester_id': rid, 'netid': netid} for rid, netid in reqs]), 200
+
+@app.route('/api/friends/accept', methods=['POST'])
+@login_required
+def accept_friend_route():
+    data = request.json or {}
+    rid = data.get('requester_id')
+    if not rid:
+        return jsonify({'error': 'requester_id is required'}), 400
+    try:
+        accept_friend(rid, current_user.id)
+        return jsonify({'message': 'Friend request accepted'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 
 #Testing database.py functions
