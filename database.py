@@ -400,7 +400,7 @@ def get_all_outfits(user_id):
                                 'item_name', ci.item_name,
                                 'item_image', ENCODE(ci.item_image, 'base64')
                             )
-                        ) AS items
+                        ) AS outfit_items
                     FROM 
                         {outfits_table} o
                     JOIN 
@@ -419,7 +419,7 @@ def get_all_outfits(user_id):
                     clothing_items_table=sql.Identifier('Clothing Items')
                 )
 
-                cursor.execute(query, (user_id))
+                cursor.execute(query, (user_id, ))
                 rows = cursor.fetchall()
                 columns = [desc[0] for desc in cursor.description]
                 results = [dict(zip(columns, row)) for row in rows]
