@@ -289,15 +289,10 @@ def save_outfit():
         return jsonify({'error': 'An error occurred while saving the outfit.'}), 500
 
 @app.route('/api/outfits', methods=['GET'])
+@login_required
 def get_outfits():
-    try:
-        # Fetch all outfits and their items from the database
-        outfits = get_all_outfits()
-        
-        return jsonify(outfits), 200
-    except Exception as e:
-        print(f"Error fetching outfits: {e}")
-        return jsonify({'error': 'Failed to fetch outfits'}), 500
+    outfits = get_all_outfits(current_user.id)
+    return jsonify(outfits), 200
 
 
 # Friends endpoints:
@@ -330,8 +325,10 @@ def get_friends_route():
 @login_required
 def get_friends_outfits_route():
     fids = [fid for fid, _ in get_friends(current_user.id)]
-    outfits = get_all_outfits()
-    return jsonify([o for o in outfits if o['user_id'] in fids]), 200
+    all_outfits = []
+    for fid in fids:
+        all_outfits.extend(get_all_outfits(fid))
+    return jsonify(all_outfits), 200
 
 @app.route('/friends')
 @login_required
@@ -365,8 +362,7 @@ def friend_outfits_page(friend_id):
     if friend_id not in mutual_ids:
         return redirect(url_for('friends_page'))
     # Fetch all outfits and filter to this friend
-    all_outfits = get_all_outfits()
-    friend_outfits = [o for o in all_outfits if o['user_id'] == friend_id]
+    friend_outfits = get_all_outfits(friend_id)
     friend_netid = get_netid(friend_id)
     return render_template(
         'friend_outfits.html',
@@ -374,12 +370,9 @@ def friend_outfits_page(friend_id):
         friend_netid=friend_netid
     )
 
-
-
 #Testing database.py functions
 # init_all_default_values(default_tables)
 # get_from_table("Sizes")
 # insert_into_table("Users", {"name" : "Testing", "email" : "testing123@gmail.com", "password" : "should be hashed"})
 # search_in_table("Clothing Items")
 # get_random_clothing_item(1)
-

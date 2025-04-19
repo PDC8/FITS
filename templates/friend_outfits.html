@@ -14,7 +14,7 @@
         <a href="/random-outfit">Generate</a>
       </div>
       <div class="logo">
-        <a href="/"><img src="logo.png" alt="Logo"></a>
+        <img src="/static/logo.png" alt="Logo">
       </div>
       <div class="nav-section right-links">
         <a href="/search">Search</a>
@@ -27,11 +27,11 @@
     <h2>{{ friend_netid }}’s Outfits</h2>
     <section class="outfit-section">
       {% if outfits %}
-        {% for o in outfits %}
+        {% for outfit in outfits %}
           <div class="outfit" style="margin-bottom:1.5rem;">
-            <h3>{{ o.outfit_name }}</h3>
+            <h3>{{ outfit.outfit_name }}</h3>
             <div class="outfit-items" style="display:flex;gap:1rem;">
-              {% for item in o.items %}
+              {% for item in outfit.outfit_items %}
                 <div>
                   {% if item.item_image %}
                     <img src="data:image/png;base64,{{ item.item_image }}"
@@ -47,7 +47,7 @@
       {% else %}
         <p>No outfits saved yet.</p>
       {% endif %}
-    </section>
+    </section>  
   </main>
 </body>
 </html>
