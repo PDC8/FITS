@@ -1,0 +1,35 @@
+/* friends.css */
+.dropdown { position: relative; display: inline-block; margin: 0 1rem; }
+.dropbtn {
+    background-color: var(--header-color);
+    color: var(--text-color);
+    border: none;
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    cursor: pointer;
+}
+.dropbtn:hover {
+    background-color: var(--hover-color);
+}
+.dropdown-content { 
+    display: none; 
+    position: absolute; 
+    background-color: 
+    var(--item-card-color); 
+    min-width: 200px; 
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15); 
+    padding: 0.5rem; 
+    z-index: 1000; 
+}
+.dropdown:hover .dropdown-content { display:block; }
+.dropdown-content input, .dropdown-content button {
+  width:100%; margin-bottom:0.5rem; padding:0.5rem; box-sizing:border-box;
+  border:1px solid var(--border-color); border-radius:4px;
+}
+.dropdown-content button { background:var(--header-color); color:var(--text-color); border:none; }
+.dropdown-content button:hover { background:var(--hover-color); }
+main { padding:2rem; }
+#friends-list { margin-top:2rem; }
+.friend-outfit { margin-bottom:1rem; }
+.friend-outfit img { width:40px; margin-right:0.25rem; vertical-align:middle; }
