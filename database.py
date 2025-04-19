@@ -427,3 +427,63 @@ def get_all_outfits():
     except Exception as e:
         print(f"Error fetching outfits with items: {e}")
         return []
+    
+
+# Functions for friends:
+def add_friend(user_id, friend_id):
+    """
+    Insert a friendship (user_id → friend_id)
+    """
+    try:
+        with get_connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    'INSERT INTO "Friends"(friend_1,friend_2) VALUES(%s,%s) ON CONFLICT DO NOTHING;',
+                    (user_id, friend_id)
+                )
+                conn.commit()
+    except Exception as e:
+        print(f"Error adding friend: {e}")
+        raise
+
+def get_friends(user_id):
+    """
+    Return list of (friend_id, netid) for all friends where either
+    friend_1 = user_id or friend_2 = user_id.
+    """
+    try:
+        with get_connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    '''
+                    SELECT f.friend_2 AS friend_id, u.netid
+                      FROM "Friends" f
+                      JOIN "Users"   u ON u.user_id = f.friend_2
+                     WHERE f.friend_1 = %s
+
+                    UNION
+
+                    SELECT f.friend_1 AS friend_id, u.netid
+                      FROM "Friends" f
+                      JOIN "Users"   u ON u.user_id = f.friend_1
+                     WHERE f.friend_2 = %s
+                    ''',
+                    (user_id, user_id)
+                )
+                return cur.fetchall()
+    except Exception as e:
+        print(f"Error fetching friends: {e}")
+        return []
+
+def get_all_users():
+    """
+    Return list of (user_id, netid) for every user.
+    """
+    try:
+        with get_connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute('SELECT user_id, netid FROM "Users";')
+                return cur.fetchall()
+    except Exception as e:
+        print(f"Error fetching all users: {e}")
+        return []

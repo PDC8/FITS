@@ -31,7 +31,10 @@ from database import (
     get_user_id,
     get_netid,
     delete_clothing_item,
-    get_all_outfits
+    get_all_outfits,
+    add_friend,
+    get_friends,
+    get_all_users
 )
 # Import for image bg remvoer
 from rembg import remove
@@ -243,7 +246,6 @@ def delete_clothing(item_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
     
 @app.route('/delete')
 @login_required
@@ -287,8 +289,6 @@ def save_outfit():
         print(f"Error saving outfit: {e}")
         return jsonify({'error': 'An error occurred while saving the outfit.'}), 500
 
-
-
 @app.route('/api/outfits', methods=['GET'])
 def get_outfits():
     try:
@@ -299,6 +299,45 @@ def get_outfits():
     except Exception as e:
         print(f"Error fetching outfits: {e}")
         return jsonify({'error': 'Failed to fetch outfits'}), 500
+
+
+# Friends endpoints:
+@app.route('/api/users', methods=['GET'])
+@login_required
+def list_users():
+    users = get_all_users()
+    return jsonify([{'user_id': uid, 'netid': netid} for uid, netid in users]), 200
+
+@app.route('/api/friends', methods=['POST'])
+@login_required
+def add_friend_route():
+    data = request.json or {}
+    fid = data.get('friend_id')
+    if not fid:
+        return jsonify({'error': 'friend_id is required'}), 400
+    try:
+        add_friend(current_user.id, fid)
+        return jsonify({'message': 'Friend added'}), 201
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/friends', methods=['GET'])
+@login_required
+def get_friends_route():
+    friends = get_friends(current_user.id)
+    return jsonify([{'user_id': fid, 'netid': netid} for fid, netid in friends]), 200
+
+@app.route('/api/friends/outfits', methods=['GET'])
+@login_required
+def get_friends_outfits_route():
+    fids = [fid for fid, _ in get_friends(current_user.id)]
+    outfits = get_all_outfits()
+    return jsonify([o for o in outfits if o['user_id'] in fids]), 200
+
+@app.route('/friends')
+@login_required
+def friends_page():
+    return render_template('friends.html')
 
 
 #Testing database.py functions
