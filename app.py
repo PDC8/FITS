@@ -82,9 +82,6 @@ def load_user(user_id):
 def home():
     if current_user.is_authenticated:
         outfits = get_all_outfits() 
-        for outfit in outfits:
-            for item in outfit['items']:
-                print('hi')
         return render_template('index.html', outfits=outfits)
     else:
         return render_template('login.html')

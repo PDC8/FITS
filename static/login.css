@@ -1,6 +1,11 @@
 /* login.css */
-h1 {
-  color: var(--border-color);
+
+.main-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+  height: 100%;
 }
 
 .cas-button {
