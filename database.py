@@ -380,7 +380,7 @@ def delete_clothing_item(item_id):
         return 0
 
 
-def get_all_outfits():
+def get_all_outfits(user_id):
     """
     Fetch all outfits with their items grouped by outfit_id
     """
@@ -407,6 +407,8 @@ def get_all_outfits():
                         {outfit_items_table} oi ON o.outfit_id = oi.outfit_id
                     JOIN 
                         {clothing_items_table} ci ON oi.item_id = ci.item_id
+                    WHERE
+                        o.user_id = %s
                     GROUP BY 
                         o.outfit_id, o.outfit_name, o.user_id
                     ORDER BY 
@@ -417,7 +419,7 @@ def get_all_outfits():
                     clothing_items_table=sql.Identifier('Clothing Items')
                 )
 
-                cursor.execute(query)
+                cursor.execute(query, (user_id))
                 rows = cursor.fetchall()
                 columns = [desc[0] for desc in cursor.description]
                 results = [dict(zip(columns, row)) for row in rows]
