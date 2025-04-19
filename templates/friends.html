@@ -15,8 +15,8 @@
         <a href="/random-outfit">Generate</a>
       </div>
       <div class="logo">
-        <a href="/">fits</a>
-      </div>
+        <a href="/"><img src="logo.png" alt="Logo"></a>
+    </div>
       <div class="nav-section right-links">
         <a href="/search">Search</a>
         <a href="/friends">Friends</a>
@@ -30,9 +30,9 @@
         <div class="dropdown-content" id="requests-dropdown"></div>
     </div>
     <div class="dropdown">
-      <button class="dropbtn">Friends' Outfits ▾</button>
-      <div class="dropdown-content" id="outfits-dropdown"></div>
-    </div>
+        <button class="dropbtn">Friends ▾</button>
+        <div class="dropdown-content" id="friends-dropdown"></div>
+    </div>  
     <div class="dropdown">
       <button class="dropbtn">Add Friend ▾</button>
       <div class="dropdown-content">
@@ -50,7 +50,7 @@
       el.innerHTML='<h2>Your Friends</h2>';
       fs.forEach(x=>{let d=document.createElement('div');d.textContent=x.netid;el.appendChild(d);});
     }
-    async function loadCourses(){
+    async function loadOutfits(){
       const os=await fetchJSON('/api/friends/outfits');
       const dd=document.getElementById('outfits-dropdown');
       dd.innerHTML='';
@@ -91,6 +91,19 @@
             dd.appendChild(row);
         });
     }
+    async function loadFriendsDropdown(){
+        const fs = await fetchJSON('/api/friends');
+        const dd = document.getElementById('friends-dropdown');
+        dd.innerHTML = '';
+        fs.forEach(f => {
+            const a = document.createElement('a');
+            a.href = `/friends/${f.user_id}`;
+            a.textContent = f.netid;
+            a.style.display = 'block';
+            a.style.padding = '0.5rem';
+            dd.appendChild(a);
+        });
+    }
     document.getElementById('add-friend-btn').onclick=async()=>{
       let n=document.getElementById('friend-netid-input').value.trim();
       if(!n) return;
@@ -108,7 +121,7 @@
     window.onload = () => {
         loadRequests();
         loadFriends();
-        loadOutfits();
+        loadFriendsDropdown();
     };
   </script>
 </body>

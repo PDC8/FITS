@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>{{ friend_netid }}’s Outfits</title>
+  <link rel="stylesheet" href="/static/base.css"/>
+  <link rel="stylesheet" href="/static/index.css"/>
+</head>
+<body>
+  <header>
+    <nav class="main-nav">
+      <div class="nav-section left-links">
+        <a href="/upload">Upload</a>
+        <a href="/random-outfit">Generate</a>
+      </div>
+      <div class="logo">
+        <a href="/"><img src="logo.png" alt="Logo"></a>
+      </div>
+      <div class="nav-section right-links">
+        <a href="/search">Search</a>
+        <a href="/friends">Friends</a>
+        <a href="/logout">Profile</a>
+      </div>
+    </nav>
+  </header>
+  <main style="padding:2rem;">
+    <h2>{{ friend_netid }}’s Outfits</h2>
+    <section class="outfit-section">
+      {% if outfits %}
+        {% for o in outfits %}
+          <div class="outfit" style="margin-bottom:1.5rem;">
+            <h3>{{ o.outfit_name }}</h3>
+            <div class="outfit-items" style="display:flex;gap:1rem;">
+              {% for item in o.items %}
+                <div>
+                  {% if item.item_image %}
+                    <img src="data:image/png;base64,{{ item.item_image }}"
+                         alt="{{ item.item_name }}"
+                         style="width:100px;"/>
+                  {% endif %}
+                  <p>{{ item.item_name }}</p>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p>No outfits saved yet.</p>
+      {% endif %}
+    </section>
+  </main>
+</body>
+</html>

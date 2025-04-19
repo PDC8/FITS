@@ -356,6 +356,24 @@ def accept_friend_route():
         return jsonify({'message': 'Friend request accepted'}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+@app.route('/friends/<int:friend_id>')
+@login_required
+def friend_outfits_page(friend_id):
+    # Only allow if they’re actually mutual friends
+    mutual_ids = [fid for fid, _ in get_friends(current_user.id)]
+    if friend_id not in mutual_ids:
+        return redirect(url_for('friends_page'))
+    # Fetch all outfits and filter to this friend
+    all_outfits = get_all_outfits()
+    friend_outfits = [o for o in all_outfits if o['user_id'] == friend_id]
+    friend_netid = get_netid(friend_id)
+    return render_template(
+        'friend_outfits.html',
+        outfits=friend_outfits,
+        friend_netid=friend_netid
+    )
+
 
 
 #Testing database.py functions
