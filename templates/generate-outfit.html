@@ -27,21 +27,19 @@
     </nav>
   </header>
 
-  <main class="outfit-generator">
-    <div class="scroll-bar"></div>
-    <div class="generate">
-      <div class="outfit-canvas">
+  <main class="outfit-display">
+    <div class="outfit-generator">
+      <div class="row-top">
+        <div class="scroll-bar"></div>
+        <div class="generate">
+          <input type="text" id="outfit-name" placeholder="Outfit Name" required />
+          <div class="outfit-canvas"></div>
+        </div>
       </div>
-      <div class="button-container">
-        <button class="generate-btn" type="button">
-          Generate Outfit
-        </button>
-        <button class="clear-btn" type="button">
-          Clear
-        </button>
-        <button class="save-btn" type="button">
-          Save
-        </button>
+      <div class="row-bottom button-container">
+        <button class="generate-btn" type="button">Generate Outfit</button>
+        <button class="clear-btn" type="button">Clear</button>
+        <button class="save-btn" type="button">Save</button>
       </div>
     </div>
   </main>
@@ -168,7 +166,7 @@
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          name: `Outfit ${new Date().toLocaleDateString()}`, // Default name
+          name: document.getElementById('outfit-name').value,
           items: outfitItems
         })
       });

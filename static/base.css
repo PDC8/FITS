@@ -49,6 +49,17 @@
     background-color: var(--hover-color);
   }
 
+
+  .left-links {
+    flex: 1;
+    justify-content: flex-start;
+  }
+
+  .right-links {
+    flex: 1;
+    justify-content: flex-end;
+  }
+
   .logo {
     display: flex;
     align-items: center;

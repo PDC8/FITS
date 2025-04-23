@@ -27,12 +27,11 @@
   </header>
 
   <section class="outfit-section">
-    <h2>All Outfits</h2>
     <div class="outfits-container">
         {% for outfit in outfits %}
         <div class="outfit-container">
             <h3>{{ outfit.outfit_name }}</h3>
-            <div class="outfit-canvas" style="position: relative; min-height: 500px; border: 1px solid #ccc;">
+            <div class="outfit-canvas">
                 {% for item in outfit.outfit_items %}
                 <div class="outfit-item" 
                     style="left: {{ item.position_x }}px; 
