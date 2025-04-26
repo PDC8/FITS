@@ -1,6 +1,11 @@
 /* random-outfit.css */
+.outfit-display {
+  display: flex;
+}
+
 .outfit-generator {
   display: flex;
+  flex-direction: column;
   width: 100%;
   padding: 2rem;
   border-radius: 6px;
@@ -8,15 +13,45 @@
   box-sizing: border-box;
 }
 
+.row-top {
+  display: flex;
+}
+
 .scroll-bar {
   background-color: var(--item-card-color);
   flex: 1;
   overflow-y: auto;
-  max-height: 80vh;
+  overflow-x: hidden;
+  min-height: 70vh;
+  margin-top: 62px;
 }
 
 .generate {
   flex: 3;
+}
+
+input[type="text"],
+select {
+  width: 90%;
+  background-color: var(--bg-color);
+  padding: 10px;
+  border: 2px solid var(--border-color);
+  border-radius: 10px;
+  font-size: 1rem;
+  margin-bottom: 20px;
+}
+
+input[type="text"]:focus,
+select:focus {
+  outline: none;
+  border-color: var(--border-color);
+}
+
+.outfit-canvas {
+  background-color: var(--item-card-color);
+  min-height: 70vh;
+  border: 2px dashed #ccc;
+  position: relative;
 }
 
 .button-container {
@@ -44,24 +79,6 @@
   background-color: var(--hover-color);
 }
 
-.outfit-canvas {
-  background-color: var(--item-card-color);
-}
-
-
-.outfit-result {
-  margin-top: 1.5rem;
-  border-top: 1px solid #ccc;
-  padding-top: 1rem;
-  min-height: 100px; /* Provide space for the generated outfit info */
-}
-
-
-.placeholder {
-  color: #999;
-  font-style: italic;
-}
-
 .draggable-item {
   background: white;
   padding: 10px;
@@ -69,10 +86,4 @@
   border-radius: 8px;
   cursor: move;
   transition: opacity 0.3s;
-}
-
-.outfit-canvas {
-  min-height: 500px;
-  border: 2px dashed #ccc;
-  position: relative;
 }
