@@ -32,7 +32,7 @@
       <div class="row-top">
         <div class="scroll-bar"></div>
         <div class="generate">
-          <input type="text" id="outfit-name" required />
+          <input type="text" id="outfit-name" placeholder="Outfit Name" required />
           <div class="outfit-canvas"></div>
         </div>
       </div>
@@ -43,7 +43,6 @@
       </div>
     </div>
   </main>
-  
 
   <script>
     document.querySelector('.generate-btn').addEventListener('click', async () => {
@@ -167,7 +166,7 @@
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          name: `Outfit ${new Date().toLocaleDateString()}`, // Default name
+          name: document.getElementById('outfit-name').value,
           items: outfitItems
         })
       });
