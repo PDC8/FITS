@@ -21,7 +21,7 @@
       <div class="nav-section right-links">
         <a href="/search">Search</a>
         <a href="/friends">Friends</a>
-        <a href="/logout">Profile</a>
+        <a href="/logout">Logout</a>
       </div>
     </nav>
   </header>
@@ -34,7 +34,7 @@
             <div class="outfit-canvas">
                 {% for item in outfit.outfit_items %}
                 <div class="outfit-item" 
-                    style="left: {{ item.position_x }}px; 
+                    style="left: {{ item.position_x + 60}}px; 
                             top: {{ item.position_y }}px;">
                   {% if item.item_image %}
                   <img src="data:image/png;base64,{{ item.item_image }}" 
