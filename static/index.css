@@ -2,23 +2,26 @@
 
 /* Outfit card layout */
 .outfits-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(600px, 1fr))
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .outfit-container {
   margin: 20px;
   padding: 20px;
   border: 1px solid #ddd;
-  background: white;
+  background: var(--item-card-color);
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   text-align: center;
+  min-height: 70vh;
+  min-width: 80vw;
 }
 
 .outfit-canvas {
   position: relative;
-  min-height: 600px;    
-  min-width: 600px;
+  min-height: 70vh;
+  min-width: 80vw;
   margin: 20px auto;  /* Center the canvas */
   overflow: hidden;   /* Prevent items from spilling out */
 }

@@ -20,9 +20,9 @@
 .scroll-bar {
   background-color: var(--item-card-color);
   flex: 1;
-  overflow-y: auto;
+  overflow-y: scroll;
   overflow-x: hidden;
-  min-height: 70vh;
+  height: 70.5vh;
   margin-top: 62px;
 }
 
@@ -81,8 +81,10 @@ select:focus {
 
 .draggable-item {
   padding: 10px;
-  margin: 10px;
+  margin: 0 auto;
   border-radius: 8px;
   cursor: move;
   transition: opacity 0.3s;
+  max-width: 120px;
+  max-height: 200px;
 }

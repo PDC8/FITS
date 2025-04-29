@@ -211,19 +211,25 @@ def random_outfit():
     try:
         # Define mapping from clothing category names to type_id values
         category_mapping = {
-            'tops': [1, 2, 3],  # T-Shirt, Tank Top, Sweatshirt
-            'bottoms': [4, 5, 6],  # Jeans, Shorts, Skirt
-            'shoes': [7],  # Shoes
+            'tops': [1, 2, 3],  # T-Shirt, Tank Top, Long Sleeve
+            'bottoms': [4, 5, 6, 7],  # Jeans, Shorts, Skirt, Pants
+            'shoes': [8],  # Shoes
+            'outerwear': [9, 10, 11],  # Sweatshirt, Jacket, Cardigan
+            'bracelet': [12],  # Bracelet
+            'necklace': [13],  # Necklace
+            'earrings': [14],  # Earrings
+            'ring': [15],  # Ring
         }
 
         outfit = {}
         for category, type_ids in category_mapping.items():
-            rand_id = random.choice(type_ids)
-            item = get_random_clothing_item(rand_id, current_user.id)
-            if item:
-                if item.get('item_image'):
-                    item['item_image'] = base64.b64encode(item['item_image']).decode('utf-8')
-            outfit[category] = item
+            rand_id = random.choice(type_ids) # Randomly choose a type_id or None
+            if(rand_id != None):
+                item = get_random_clothing_item(rand_id, current_user.id)
+                if item:
+                    if item.get('item_image'):
+                        item['item_image'] = base64.b64encode(item['item_image']).decode('utf-8')
+                outfit[category] = item
         return jsonify(outfit), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -372,7 +378,8 @@ def friend_outfits_page(friend_id):
 
 #Testing database.py functions
 # init_all_default_values(default_tables)
-# get_from_table("Sizes")
+# get_from_table("Clothing Types")
 # insert_into_table("Users", {"name" : "Testing", "email" : "testing123@gmail.com", "password" : "should be hashed"})
 # search_in_table("Clothing Items")
 # get_random_clothing_item(1)
+ 
