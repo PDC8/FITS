@@ -177,7 +177,7 @@ def create_clothing():
             id = str(id)
             insert_into_table('Clothing Fabrics', {'item_id' : clothing_item_id, 'fabric_id' : id})
         print(color_ids, fabric_ids)
-        return redirect(url_for('home'))
+        return redirect(url_for('upload'))
     
     except Exception as e:
         return jsonify({"error": str(e)}), 500
