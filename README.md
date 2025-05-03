@@ -1,6 +1,6 @@
-# Closetify 👕🧥👗  
+# FITS 👕🧥👗  
 
-Closetify is a web app designed to digitize and organize your wardrobe, making outfit planning seamless and efficient. Users can upload and categorize clothing items, mix and match outfits, and easily keep track of their closet—all in one place.
+FITS is a web app designed to digitize and organize your wardrobe, making outfit planning seamless and efficient. Users can upload and categorize clothing items, mix and match outfits, and easily keep track of their closet—all in one place.
 
 ---
 
