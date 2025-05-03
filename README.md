@@ -33,7 +33,7 @@ FITS is a web app designed to digitize and organize your wardrobe, making outfit
 git clone https://github.com/yale-cpsc-419-25sp/project-project-group-15.git
 cd project-project-group-15
 ```
-2. Create and Activate Virtual Environment
+2. Create and Activate Environment
 
 ```bash
 
