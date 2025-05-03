@@ -21,6 +21,7 @@ FITS is a web app designed to digitize and organize your wardrobe, making outfit
 - Upload clothing items with automatic background removal
 - Search by brand, size, type, color, and fabric
 - Save and view custom outfits
+- Random outfit generation
 - Add friends and view their saved outfits
 - PostgreSQL database integration
 
@@ -45,9 +46,6 @@ source .venv/bin/activate
    
 ```bash
 pip install -r requirements.txt
-```
-```bash
-brew install libjpeg libpng
 ```
 6. Set Up the Environment Variables
 
@@ -98,4 +96,6 @@ This app uses Yale CAS authentication.
 
 ## External Data:
 
-All required data (brands, sizes, colors, etc.) is stored in the database and initialized via `default_values.py`. No external dataset is needed.
+All required data (brands, sizes, colors, etc.) is stored in the database and initialized via `default_values.py`.
+I (Peidong Chen) will email you my .env file so you don't have to setup our database structure and relationships.
+
