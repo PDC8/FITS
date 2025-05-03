@@ -438,9 +438,13 @@ def add_friend(user_id, friend_id):
     """
     try:
         with get_connection() as conn:
-            with conn.cursor() as cur:
-                cur.execute(
-                    'INSERT INTO "Friends"(friend_1,friend_2) VALUES(%s,%s) ON CONFLICT DO NOTHING;',
+            with conn.cursor() as cursor:
+                cursor.execute(
+                    '''
+                    INSERT INTO "Friends"
+                    (friend_1, friend_2) 
+                    VALUES(%s, %s) ON CONFLICT DO NOTHING;
+                    ''',
                     (user_id, friend_id)
                 )
                 conn.commit()
@@ -448,68 +452,29 @@ def add_friend(user_id, friend_id):
         print(f"Error adding friend: {e}")
         raise
 
-def get_friends(user_id):
-    """
-    Return (friend_id, netid) only for mutual friendships—
-    i.e. where both (you→them) and (them→you) exist in Friends.
-    """
-    try:
-        with get_connection() as conn:
-            with conn.cursor() as cur:
-                cur.execute(
-                    '''
-                    SELECT f.friend_2 AS friend_id, u.netid
-                      FROM "Friends" f
-                      JOIN "Users"   u
-                        ON u.user_id = f.friend_2
-                     WHERE f.friend_1 = %s
-                       AND EXISTS (
-                         SELECT 1 FROM "Friends"
-                          WHERE friend_1 = f.friend_2
-                            AND friend_2 = f.friend_1
-                       )
-                    UNION
-                    SELECT f.friend_1 AS friend_id, u.netid
-                      FROM "Friends" f
-                      JOIN "Users"   u
-                        ON u.user_id = f.friend_1
-                     WHERE f.friend_2 = %s
-                       AND EXISTS (
-                         SELECT 1 FROM "Friends"
-                          WHERE friend_1 = f.friend_2
-                            AND friend_2 = f.friend_1
-                       )
-                    ''',
-                    (user_id, user_id)
-                )
-                return cur.fetchall()
-    except Exception as e:
-        print(f"Error fetching friends: {e}")
-        return []
-
 def get_friend_requests(user_id):
     """
     Pending requests where friend_2 = you but you haven't added them back.
     """
     try:
         with get_connection() as conn:
-            with conn.cursor() as cur:
-                cur.execute(
+            with conn.cursor() as cursor:
+                cursor.execute(
                     '''
                     SELECT f.friend_1 AS requester_id, u.netid
                       FROM "Friends" f
                       JOIN "Users"   u
                         ON u.user_id = f.friend_1
-                     WHERE f.friend_2 = %s
-                       AND NOT EXISTS (
-                         SELECT 1 FROM "Friends"
-                          WHERE friend_1 = %s
-                            AND friend_2 = f.friend_1
-                       )
+                      WHERE f.friend_2 = %s
+                      AND NOT EXISTS (
+                        SELECT 1 FROM "Friends"
+                        WHERE friend_1 = %s
+                        AND friend_2 = f.friend_1
+                      )
                     ''',
                     (user_id, user_id)
                 )
-                return cur.fetchall()
+                return cursor.fetchall()
     except Exception as e:
         print(f"Error fetching friend requests: {e}")
         return []
@@ -520,15 +485,99 @@ def accept_friend(requester_id, user_id):
     """
     add_friend(user_id, requester_id)
 
+def get_friends(user_id):
+    """
+    Return (friend_id, netid) only for mutual friendships—
+    i.e. where both (you→them) and (them→you) exist in Friends.
+    """
+    try:
+        with get_connection() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(
+                    '''
+                    SELECT f.friend_2 AS friend_id, u.netid
+                      FROM "Friends" f
+                      JOIN "Users"   u
+                        ON u.user_id = f.friend_2
+                      WHERE f.friend_1 = %s
+                      AND EXISTS (
+                        SELECT 1 FROM "Friends"
+                        WHERE friend_1 = f.friend_2
+                        AND friend_2 = f.friend_1
+                      )
+                    UNION
+                    SELECT f.friend_1 AS friend_id, u.netid
+                      FROM "Friends" f
+                      JOIN "Users"   u
+                        ON u.user_id = f.friend_1
+                      WHERE f.friend_2 = %s
+                      AND EXISTS (
+                        SELECT 1 FROM "Friends"
+                        WHERE friend_1 = f.friend_2
+                        AND friend_2 = f.friend_1
+                      )
+                    ''',
+                    (user_id, user_id)
+                )
+                return cursor.fetchall()
+    except Exception as e:
+        print(f"Error fetching friends: {e}")
+        return []
+
 def get_all_users():
     """
     Return list of (user_id, netid) for every user.
     """
     try:
         with get_connection() as conn:
-            with conn.cursor() as cur:
-                cur.execute('SELECT user_id, netid FROM "Users";')
-                return cur.fetchall()
+            with conn.cursor() as cursor:
+                cursor.execute('SELECT user_id, netid FROM "Users";')
+                return cursor.fetchall()
     except Exception as e:
         print(f"Error fetching all users: {e}")
         return []
+
+def get_all_non_friends(user_id):
+    """
+    Fetch all users who are not already friends with the given user_id.
+    """
+    try:
+        with get_connection() as conn:
+            with conn.cursor() as cursor:
+                query = """
+                    SELECT u.user_id, u.netid
+                    FROM "Users" u
+                    WHERE u.user_id != %s
+                    AND NOT EXISTS (
+                        SELECT 1
+                        FROM "Friends" f
+                        WHERE (f.friend_1 = %s AND f.friend_2 = u.user_id)
+                        OR (f.friend_1 = u.user_id AND f.friend_2 = %s)
+                    )
+                """
+                cursor.execute(query, (user_id, user_id, user_id))
+                rows = cursor.fetchall()
+                return [{'user_id': row[0], 'netid': row[1]} for row in rows]
+    except Exception as e:
+        print(f"Error fetching users not friends: {e}")
+        return []
+    
+def delete_friend(user_id, friend_id):
+    """
+    Remove a friendship between two users.
+    """
+    try:
+        with get_connection() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(
+                    '''
+                    DELETE FROM "Friends"
+                    WHERE (friend_1 = %s AND friend_2 = %s)
+                       OR (friend_1 = %s AND friend_2 = %s);
+                    ''',
+                    (user_id, friend_id, friend_id, user_id)
+                )
+                conn.commit()
+    except Exception as e:
+        print(f"Error removing friend: {e}")
+        raise

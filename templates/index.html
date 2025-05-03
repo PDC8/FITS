@@ -3,10 +3,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Digital Closet - Home</title>
-  <link rel="stylesheet" href="/static/base.css" />
-  <link rel="stylesheet" href="/static/index.css" /> 
+  <title>Digital Closet - Home</title> 
+  <link rel="stylesheet" href="/static/base.css"/>
+  <link rel="stylesheet" href="/static/index.css"/>
   <link href="https://fonts.googleapis.com/css2?family=Sour+Gummy:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
   <header>
@@ -20,33 +21,51 @@
       </div>
       <div class="nav-section right-links">
         <a href="/search">Search</a>
-        <a href="/friends">Friends</a>
         <a href="/logout">Logout</a>
       </div>
     </nav>
   </header>
 
-  <section class="outfit-section">
-    <div class="outfits-container">
-        {% for outfit in outfits %}
-        <div class="outfit-container">
-            <h3>{{ outfit.outfit_name }}</h3>
-            <div class="outfit-canvas">
-                {% for item in outfit.outfit_items %}
-                <div class="outfit-item" 
-                    style="left: {{ item.position_x + 60}}px; 
-                            top: {{ item.position_y }}px;">
-                  {% if item.item_image %}
-                  <img src="data:image/png;base64,{{ item.item_image }}" 
-                      alt="{{ item.item_name }}">
-                  {% endif %}
-                  <p>{{ item.item_name }}</p>
-                </div>
-                {% endfor %}
+  <main>
+    <div class="display">
+      <div class="friends-header">
+        <div class="dropdown">
+          <button class="dropbtn">Friends' Fits ▾</button>
+          <div class="dropdown-content">
+            <input type="text" id="search-friends" placeholder="Search Friends">
+            <div id="friends-list-container">
             </div>
+          </div>
+        </div> 
+    
+        <div class="dropdown">
+          <button class="dropbtn">Add Friend ▾</button>
+          <span id="pending-requests-count" class="pending-requests-count"></span>
+          <div class="dropdown-content">
+            <div id="pending-requests" class="hidden">
+              <h3>Pending Requests</h3>
+              <div id="requests-list"></div>
+            </div>
+            
+            <div id="add-friend-form">
+              <div class="search-container">
+                <input type="text" id="friend-search-input" placeholder="Search by NetID">
+                <div id="search-results" class="search-results"></div>
+              </div>
+              <div id="add-friend-message"></div>
+            </div>
+          </div>
         </div>
-        {% endfor %}
+      </div>
+
+      <div id="outfits-container" class="hidden">
+      </div>
     </div>
-</section>
+  </main>
+
+  <script>
+    const currentUserId = {{ user_id }};
+  </script>
+  <script src="/static/scripts/index.js"></script>
 </body>
 </html>

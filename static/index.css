@@ -1,6 +1,4 @@
 /* index.css */
-
-/* Outfit card layout */
 .outfits-container {
   display: flex;
   flex-direction: column;
@@ -37,4 +35,152 @@
   height: auto;
   display: block;
   margin: 0 auto;
+}
+
+.display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 2rem;
+}
+
+.friends-header {
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  width: 100%;
+  padding: 1rem;
+}
+
+.dropdown { 
+  position: relative; 
+  display: inline-block;
+  margin: 0 1rem; 
+}
+.dropbtn {
+  position: relative;
+  background-color: var(--header-color);
+  color: var(--text-color);
+  border: none;
+  border-radius: 5px;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+}
+.dropbtn:hover {
+  background-color: var(--hover-color);
+}
+.dropdown-content { 
+  display: none; 
+  position: absolute; 
+  background-color: 
+  var(--item-card-color); 
+  min-width: 200px; 
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15); 
+  padding: 0.5rem; 
+  z-index: 1000; 
+}
+.dropdown:hover .dropdown-content { 
+  display:block; 
+}
+.dropdown-content input, .dropdown-content button {
+width:100%; margin-bottom:0.5rem; padding:0.5rem; box-sizing:border-box;
+border:1px solid var(--border-color); border-radius:4px;
+}
+.dropdown-content button { 
+  background:var(--header-color); 
+  color:var(--text-color); border:none; 
+}
+.dropdown-content button:hover { 
+  background:var(--hover-color); 
+}
+
+.friend-item, .request-friend-item, .add-friend-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0.5rem 0.5rem;
+  border-radius: 4px;
+  gap: 1rem;
+}
+
+.icon-btns {
+  display: flex;
+  gap: 1rem;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: black;
+  transition: color 0.2s;
+  width: 10px;
+}
+
+input[type="text"],
+select {
+background-color: var(--item-card-color);
+padding: 0.5rem;
+border: 2px solid var(--border-color);
+border-radius: 10px;
+font-size: 1rem;
+}
+
+input[type="text"]:focus,
+select:focus {
+outline: none;
+border-color: var(--border-color);
+}
+
+.pending-requests-count {
+  position: absolute; 
+  top: -8px; 
+  right: -8px; 
+  background-color: var(--border-color);
+  color: white;
+  border-radius: 50%;
+  padding: 4px 8px;
+  font-size: 12px;
+  font-weight: bold;
+  display: none;
+  z-index: 1; 
+}
+
+.pending-requests-count.show {
+  display: inline-block; /* Show the badge when there are pending requests */
+}
+
+.hidden {
+  display: none;
+}
+
+.friend-item span {
+  cursor: pointer;
+}
+
+#pending-requests {
+  margin-bottom: 2rem;
+}
+
+.outfits-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  gap: 0.5rem;
+}
+
+.back-arrow {
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.back-arrow:hover {
+  color: var(--header-color);
+}
+
+.search-results {
+  margin-left: 0.25rem;
 }
