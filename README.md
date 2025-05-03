@@ -30,24 +30,24 @@ FITS is a web app designed to digitize and organize your wardrobe, making outfit
 
 1. Clone the Repository
 ```bash
-    git clone https://github.com/yale-cpsc-419-25sp/project-project-group-15.git
-    cd project-project-group-15
+git clone https://github.com/yale-cpsc-419-25sp/project-project-group-15.git
+cd project-project-group-15
 ```
 2. Create and Activate Virtual Environment
 
 ```bash
 
-    python3 -m venv .venv
-    source .venv/bin/activate
+python3 -m venv .venv
+source .venv/bin/activate
 ```
 
 4. Install Dependencies
    
 ```bash
-    pip install -r requirements.txt
+pip install -r requirements.txt
 ```
 ```bash
-    brew install libjpeg libpng
+brew install libjpeg libpng
 ```
 6. Set Up the Environment Variables
 
@@ -71,10 +71,10 @@ The app requires default values for tables like brands, sizes, colors, and fabri
 
 To initialize:
 ```bash
-    from database import init_all_default_values
-    from default_values import default_tables
+from database import init_all_default_values
+from default_values import default_tables
 
-    init_all_default_values(default_tables)
+init_all_default_values(default_tables)
 ```
 Ensure your PostgreSQL server is running and tables are created beforehand.
 
@@ -82,11 +82,11 @@ Ensure your PostgreSQL server is running and tables are created beforehand.
 
 ## Running the App:
 ```bash
-    python runserver.py 8000
+python runserver.py 8000
 ```
 Visit in your browser:
 ```bash
-    http://127.0.0.1:8000
+http://127.0.0.1:8000
 ```
 ---
 
