@@ -29,10 +29,10 @@ FITS is a web app designed to digitize and organize your wardrobe, making outfit
 ## ⚙️ Setup Instructions (Mac/Linux)
 
 1. Clone the Repository
-
+```bash
     git clone <your-repo-url>
     cd <your-project-directory>
-
+```
 2. Create and Activate Virtual Environment
 
     python3 -m venv .venv
