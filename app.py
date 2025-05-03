@@ -36,7 +36,9 @@ from database import (
     get_friends,
     get_all_users,
     get_friend_requests,
-    accept_friend
+    accept_friend,
+    get_all_non_friends,
+    delete_friend
 )
 # Import for image bg remvoer
 from rembg import remove
@@ -84,7 +86,7 @@ def load_user(user_id):
 def home():
     if current_user.is_authenticated:
         outfits = get_all_outfits(current_user.id) 
-        return render_template('index.html', outfits=outfits)
+        return render_template('index.html', user_id=current_user.id)
     else:
         return render_template('login.html')
 
@@ -312,6 +314,7 @@ def list_users():
 @login_required
 def add_friend_route():
     data = request.json or {}
+    print(data)
     fid = data.get('friend_id')
     if not fid:
         return jsonify({'error': 'friend_id is required'}), 400
@@ -327,14 +330,21 @@ def get_friends_route():
     friends = get_friends(current_user.id)
     return jsonify([{'user_id': fid, 'netid': netid} for fid, netid in friends]), 200
 
-@app.route('/api/friends/outfits', methods=['GET'])
+# @app.route('/api/friends/outfits', methods=['GET'])
+# @login_required
+# def get_friends_outfits_route():
+#     fids = [fid for fid, _ in get_friends(current_user.id)]
+#     all_outfits = []
+#     for fid in fids:
+#         all_outfits.extend(get_all_outfits(fid))
+#     return jsonify(all_outfits), 200
+
+@app.route('/api/friends/<int:friend_id>/outfits', methods=['GET'])
 @login_required
-def get_friends_outfits_route():
-    fids = [fid for fid, _ in get_friends(current_user.id)]
-    all_outfits = []
-    for fid in fids:
-        all_outfits.extend(get_all_outfits(fid))
-    return jsonify(all_outfits), 200
+def get_friends_outfits(friend_id):
+    outfits = get_all_outfits(friend_id)
+    return jsonify(outfits), 200
+
 
 @app.route('/friends')
 @login_required
@@ -375,6 +385,38 @@ def friend_outfits_page(friend_id):
         outfits=friend_outfits,
         friend_netid=friend_netid
     )
+
+@app.route('/api/users/not-friends', methods=['GET'])
+@login_required
+def get_users_not_friends():
+    """
+    Fetch all users who are not already friends with the current user.
+    """
+    try:
+        users = get_all_non_friends(current_user.id)
+        return jsonify(users), 200
+    except Exception as e:
+        print(f"Error fetching users not friends: {e}")
+        return jsonify({'error': 'Failed to fetch users'}), 500
+
+@app.route('/api/friends/remove', methods=['POST'])
+@login_required
+def remove_friend():
+    """
+    Remove a friend from the current user's friend list.
+    """
+    try:
+        data = request.json
+        friend_id = data.get('friend_id')
+        print(data)
+        if not friend_id:
+            return jsonify({'error': 'friend_id is required'}), 400
+        delete_friend(current_user.id, friend_id)  # Call your database function
+        return jsonify({'message': 'Friend removed successfully'}), 200
+    except Exception as e:
+        print(f"Error removing friend: {e}")
+        return jsonify({'error': 'Failed to remove friend'}), 500
+
 
 #Testing database.py functions
 # init_all_default_values(default_tables)
