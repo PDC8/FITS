@@ -95,4 +95,6 @@ This app uses Yale CAS authentication.
 
 ## External Data:
 
-All required data (brands, sizes, colors, etc.) is stored in the database and initialized via `default_values.py`. No external dataset is needed.
+All required data (brands, sizes, colors, etc.) is stored in the database and initialized via `default_values.py`.
+I (Peidong Chen) will email you my .env file so you don't have to setup our database structure and relationships.
+
