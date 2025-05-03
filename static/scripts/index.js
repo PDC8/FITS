@@ -207,7 +207,7 @@ function displayUsers(users, container) {
 async function loadOutfits(userId) {
   try {
       console.log('Loading outfits for friend ID:', userId);
-      const response = await fetch(`/api/friends/${userId}/outfits`);
+      const response = await fetch(`/api/outfits/${userId}`);
       if (!response.ok) {
           console.error('Failed to load outfits');
           return;

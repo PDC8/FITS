@@ -22,24 +22,7 @@ from flask_login import (
 from cas import CASClient
 # Imports for database
 from default_values import default_tables
-from database import (
-    get_from_table, 
-    init_all_default_values, 
-    insert_into_table, 
-    search_in_table, 
-    get_random_clothing_item,
-    get_user_id,
-    get_netid,
-    delete_clothing_item,
-    get_all_outfits,
-    add_friend,
-    get_friends,
-    get_all_users,
-    get_friend_requests,
-    accept_friend,
-    get_all_non_friends,
-    delete_friend
-)
+from database import *
 # Import for image bg remvoer
 from rembg import remove
 
@@ -81,7 +64,6 @@ def load_user(user_id):
     netid = get_netid(user_id)
     return User(user_id, netid)
 
-
 @app.route('/')
 def home():
     if current_user.is_authenticated:
@@ -116,7 +98,6 @@ def cas_callback():
     user = User(user_id, netid)
     login_user(user)
     return redirect(url_for('home'))
-
 
 @app.route('/random-outfit')
 @login_required
@@ -236,7 +217,6 @@ def random_outfit():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
-
 # Endpoint to delete clothing item
 @app.route('/api/clothing/<item_id>', methods=['DELETE'])
 @login_required
@@ -252,13 +232,11 @@ def delete_clothing(item_id):
             return jsonify({"error": "Clothing item not found."}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
     
 @app.route('/delete')
 @login_required
 def delete_page():
     return render_template('delete.html', brands=brands, sizes=sizes, types=types, colors=colors, fabrics=fabrics)
-
 
 # Endpoint to save outfit
 @app.route('/api/outfits', methods=['POST'])
@@ -296,12 +274,11 @@ def save_outfit():
         print(f"Error saving outfit: {e}")
         return jsonify({'error': 'An error occurred while saving the outfit.'}), 500
 
-@app.route('/api/outfits', methods=['GET'])
+@app.route('/api/outfits/<int:user_id>', methods=['GET'])
 @login_required
-def get_outfits():
-    outfits = get_all_outfits(current_user.id)
+def get_outfits(user_id):
+    outfits = get_all_outfits(user_id)
     return jsonify(outfits), 200
-
 
 # Friends endpoints:
 @app.route('/api/users', methods=['GET'])
@@ -330,26 +307,6 @@ def get_friends_route():
     friends = get_friends(current_user.id)
     return jsonify([{'user_id': fid, 'netid': netid} for fid, netid in friends]), 200
 
-# @app.route('/api/friends/outfits', methods=['GET'])
-# @login_required
-# def get_friends_outfits_route():
-#     fids = [fid for fid, _ in get_friends(current_user.id)]
-#     all_outfits = []
-#     for fid in fids:
-#         all_outfits.extend(get_all_outfits(fid))
-#     return jsonify(all_outfits), 200
-
-@app.route('/api/friends/<int:friend_id>/outfits', methods=['GET'])
-@login_required
-def get_friends_outfits(friend_id):
-    outfits = get_all_outfits(friend_id)
-    return jsonify(outfits), 200
-
-
-@app.route('/friends')
-@login_required
-def friends_page():
-    return render_template('friends.html')
 
 @app.route('/api/friend-requests', methods=['GET'])
 @login_required
@@ -369,22 +326,6 @@ def accept_friend_route():
         return jsonify({'message': 'Friend request accepted'}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-    
-@app.route('/friends/<int:friend_id>')
-@login_required
-def friend_outfits_page(friend_id):
-    # Only allow if they’re actually mutual friends
-    mutual_ids = [fid for fid, _ in get_friends(current_user.id)]
-    if friend_id not in mutual_ids:
-        return redirect(url_for('friends_page'))
-    # Fetch all outfits and filter to this friend
-    friend_outfits = get_all_outfits(friend_id)
-    friend_netid = get_netid(friend_id)
-    return render_template(
-        'friend_outfits.html',
-        outfits=friend_outfits,
-        friend_netid=friend_netid
-    )
 
 @app.route('/api/users/not-friends', methods=['GET'])
 @login_required
@@ -416,12 +357,3 @@ def remove_friend():
     except Exception as e:
         print(f"Error removing friend: {e}")
         return jsonify({'error': 'Failed to remove friend'}), 500
-
-
-#Testing database.py functions
-# init_all_default_values(default_tables)
-# get_from_table("Clothing Types")
-# insert_into_table("Users", {"name" : "Testing", "email" : "testing123@gmail.com", "password" : "should be hashed"})
-# search_in_table("Clothing Items")
-# get_random_clothing_item(1)
- 
