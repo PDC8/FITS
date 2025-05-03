@@ -46,9 +46,6 @@ source .venv/bin/activate
 ```bash
 pip install -r requirements.txt
 ```
-```bash
-brew install libjpeg libpng
-```
 6. Set Up the Environment Variables
 
     Create a `.env` file in the root directory with the following content:
