@@ -31,8 +31,8 @@ FITS is a web app designed to digitize and organize your wardrobe, making outfit
 
 1. Clone the Repository
 ```bash
-git clone https://github.com/yale-cpsc-419-25sp/project-project-group-15.git
-cd project-project-group-15
+git clone https://github.com/PDC8/FITS.git
+cd into the folder
 ```
 2. Create and Activate Environment
 
@@ -65,7 +65,7 @@ pip install -r requirements.txt
 
 ## Database Initialization:
 
-The app requires default values for tables like brands, sizes, colors, and fabrics. These are defined in default_values.py.
+The app requires default values for tables like brands, sizes, colors, and fabrics. These are defined in default_values.py. (Not required if running on our database)
 
 To initialize:
 ```bash
@@ -80,7 +80,7 @@ Ensure your PostgreSQL server is running and tables are created beforehand.
 
 ## Running the App:
 ```bash
-python runserver.py 8000
+python runserver.py
 ```
 Visit in your browser:
 ```bash
@@ -98,4 +98,15 @@ This app uses Yale CAS authentication.
 
 All required data (brands, sizes, colors, etc.) is stored in the database and initialized via `default_values.py`.
 I (Peidong Chen) will email you my .env file so you don't have to setup our database structure and relationships.
+
+---
+
+## Code Structure:
+- app.py has all the routes that our web app class
+- database.py includes all the sql queries we are performing with our database
+- templates folder includes all the html
+- static folder includes our css and js
+- features like outfit creation can be found within the generate-outfit.js
+- all of our search with friends and outfits are dynamic searches which can be found in the relative js code
+- our friends feature and request notification can be found in index.js and database.py
 

@@ -21,7 +21,7 @@
   min-height: 70vh;
   min-width: 80vw;
   margin: 20px auto;  /* Center the canvas */
-  overflow: hidden;   /* Prevent items from spilling out */
+  overflow-x: scroll;   /* Prevent items from spilling out */
 }
 
 .outfit-item {
