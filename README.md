@@ -110,3 +110,5 @@ I (Peidong Chen) will email you my .env file so you don't have to setup our data
 - all of our search with friends and outfits are dynamic searches which can be found in the relative js code
 - our friends feature and request notification can be found in index.js and database.py
 
+
+![alt text](images/SQL_Diagram.png)
